@@ -1,0 +1,107 @@
+<?php
+    include("./views/header-int-fc.phtml"); 
+ ?>
+<section class="alt-font padding-60px-tb md-padding-40px-tb full-screen">
+        <div class="container">
+            <h4 class="col-12">Seleccionar cliente</h4>
+            <form class="form-inline" method="POST">
+                    <div class="form-group mx-sm-2 ">
+                        <label>Cliente</label>
+                            <select id="clienteRonda" class="form-control ml-4" placeholder="Objetivo" name="objetivo">
+                                <?php
+                                    foreach($clientes as $fila=>$valor){
+                                        echo '<option value="'.$valor['nombre'].'">'.$valor['nombre'].'</option>';
+                                    } 
+                                ?>
+                            </select>
+                    </div>
+                    <h4 class="col-12">Cargar items ronda</h4>
+                    <div class="form-group mx-sm-2">
+                     <label>Secuencia</label>
+                        <input class="form-control ml-3" style="width:50px" id="ordenItemRonda">
+                    </div>
+                    <div class="form-group mx-sm-2">
+                     <label>Nombre</label>
+                        <input class="form-control ml-4" id="nombreItemRonda" placeholder="Nombre ">
+                    </div>
+                    <div class="form-group mx-sm-2">
+                     <label>Descripcion</label>
+                        <input class="form-control ml-4" id="descripcionItemRonda" placeholder="Descripcion">
+                    </div>
+                    <button type="button" class="btn btn-primary ml-4 rounded-pill" id="agregarItem">Agregar item</button>
+            </form>
+
+                <table class="table table-bordered" id="tabla-items-ronda">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th style="width:10px" scope="col">Sec</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Descripcion</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+
+                <h4>Generar ronda</h4>
+
+               
+                    <div class="form-group mx-sm-2">
+                     <label>Nombre</label>
+                        <input class="form-control ml-4" id="nombreRonda" placeholder="Nombre ">
+                    </div>
+                    <div class="form-group mx-sm-2">
+                    <label>Punto de control</label>
+                        <select id="controlRonda" class="form-control ml-4" placeholder="Objetivo" name="objetivo">
+                            <?php
+                                foreach($controles as $fila=>$valor){
+                                    echo '<option value="'.$valor['nombre'].'">'.$valor['nombre'].'</option>';
+                                } 
+                            ?>
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-success ml-4 rounded-pill" id="cargarRonda">Cargar Ronda</button>
+                
+
+                <div class="modal fade" id="actualizarControlModal" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Modificar control</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="POST">
+                                <div class="form-group" >
+                                    <label id="idControl" class="col-form-label">ID</label>
+                                    <input type="text" class="form-control" id="idControlActulizar" readonly>
+                                </div>
+                                <div class="form-group" >
+                                    <label id="modificarNombre" class="col-form-label">Nombre</label>
+                                    <input type="text" class="form-control" id="controlActualizar">
+                                </div>
+                                <div class="form-group">
+                                    <label for="objetivo" class="col-form-label">Objetivo</label>
+                                    <select class="form-control" id="modificarObjetivo">
+                                    <?php
+                                        foreach($objetivos as $fila=>$valor){
+                                            echo '<option id="objetivo" value="'.$valor['nombre'].'">'.$valor['nombre'].'</option>';
+                                        } 
+                                    ?>
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                            <button type="button" class="btn btn-primary modificarControl">Modificar</button>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+</section>
+<!-- start footer -->
+<?php //include("./views/footer.phtml"); ?>

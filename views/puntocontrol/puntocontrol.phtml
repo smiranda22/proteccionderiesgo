@@ -1,0 +1,108 @@
+<?php
+    include("./views/header-int-fc.phtml"); 
+ ?>
+<section class="alt-font padding-60px-tb md-padding-40px-tb full-screen">
+            <div class="container">
+                <form class="form-inline" method="POST">
+                    <div class="form-group mx-sm-3 bg-info">
+                        <label class="mb-4">Cliente</label>
+                            <select class="form-control ml-4 clienteControl" id="cliente" name="cliente">
+                            <option value="" selected="true" disabled="disabled" >Seleccione un cliente</option>
+                                <?php
+                                
+                                    foreach($cliente as $fila=>$valor){
+                                        echo '<option class="cliente" value="'.$valor['codigo'].'">'.$valor['nombre'].'</option>';
+                                    } 
+                                ?>
+                            </select>
+                    </div>
+                    <div class="form-group bg-danger">
+                        <label class="mb-4">Nombre</label>
+                        <input type="text" id="nombreControl" class="form-control ml-4" placeholder="Nombre" name="nombre-punto-control">
+                    </div>
+                    <div class="form-group mx-sm-3 bg-success">
+                        <label class="mb-4">Objetivo</label>
+                            <select id="objetivo" class="form-control ml-4" placeholder="Objetivo" name="objetivo">
+                                <option value="" selected="true" disabled="disabled" >Seleccione un objetivo</option>
+                                <?php
+                                
+                                    foreach($objetivo as $fila=>$valor){
+                                        echo '<option class= "cliente" value="'.$valor['objetivo'].'">'.$valor['nombre'].'</option>';
+                                    } 
+                                ?>
+                            </select>
+                    </div>
+                    <div class="form-group mx-sm-3 bg-warning col-12 justify-content-end">
+                        <button type="button" class="btn btn-primary mb-4 ml-4 rounded-pill verControl">Ver Controles</button>
+                        <button type="button" class="btn btn-success mb-4 ml-4 rounded-pill agregarControl">Agregar Control</button>
+                    </div>
+                </form>
+
+                <table class="table" id="tabla-control">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Objetivo</th>
+                            <th scope="col">Opciones</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php 
+                            foreach($controlClientes as $fila=>$valor){
+                                echo '<tr>';
+                                echo '<td class="id">'.$valor['id'].'</td>';
+                                echo '<td class="nombre">'.$valor['nombre'].'</td>';
+                                echo '<td class="objetivo">'.$valor['objetivo'].'</td>';
+                                echo '<td><button class="modalControl btn btn-info rounded-pill" data-id="'.$valor['id'].'">Editar</button></td>';
+                                echo '<td><button class="eliminarControl btn btn-danger rounded-pill" data-id="'.$valor['id'].'">Eliminar</button></td>';
+                                echo '</tr>';
+                            }
+                        ?>
+                    </tbody>
+                </table>
+
+                <div class="modal fade" id="actualizarControlModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Modificar control</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="POST">
+
+                                <div class="form-group" >
+                                    <label id="idControl" class="col-form-label">ID</label>
+                                    <input type="text" class="form-control" id="idControlActulizar" readonly>
+                                </div>
+                                <div class="form-group" >
+                                    <label id="modificarNombre" class="col-form-label">Nombre</label>
+                                    <input type="text" class="form-control" id="controlActualizar">
+                                </div>
+                                <div class="form-group">
+                                    <label for="objetivo" class="col-form-label">Objetivo</label>
+                                    <select class="form-control" id="modificarObjetivo">
+                                    <?php
+                                        foreach($objetivos as $fila=>$valor){
+                                            echo '<option id="objetivo" value="'.$valor['nombre'].'">'.$valor['nombre'].'</option>';
+                                        } 
+                                    ?>
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                            <button type="button" class="btn btn-primary modificarControl">Modificar</button>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+</section>
+<!-- start footer -->
+<?php //include("./views/footer.phtml"); ?>
