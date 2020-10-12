@@ -24,10 +24,16 @@ class PuntocontrolController extends Controller
         //Cargo la ruta de la pagina
         $this->view = 'puntocontrol/puntocontrol';
 
-        //Obtengo los clientes para el option de Clientes
-        $clientes = $this->getClientes();
 
-        $this->data['cliente'] = $clientes;
+        if ($_SESSION['idCliente']){
+            $idCliente = $_SESSION['idCliente'];
+            $this->listarObjetivos($idCliente);
+        }
+            //Obtengo los clientes para el option de Clientes
+            $clientes = $this->getClientes();
+
+            $this->data['cliente'] = $clientes;
+
 
     }
 
@@ -47,13 +53,13 @@ class PuntocontrolController extends Controller
     //LISTO LOS OBJETIVOS SEGUN EL CLIENTE
     public function listarObjetivos($data){
 
-        $idCliente = $data['id'];
+        $idCliente = $data['idCliente'];
 
         $listarObjetivos = new PuntocontrolManager();
 
-        $array = "hola";
+        return $this->data['objetivos'] = $listarObjetivos->listarObjetivos($idCliente);
 
-        return $array;
+
     }
 
 

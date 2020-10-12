@@ -26,16 +26,12 @@
 
       $('.clienteControl').change(function(){
         
-         let idcliente = $('#cliente').val();
-
-         console.log(typeof(idcliente));
-         console.log(idcliente);
-
+         let idCliente = $('#cliente').val();
          $.ajax({
             type : 'post',
             cache: false,
-            url : './puntocontrol/listarobjetivo', //Here you will fetch records 
-            data : {  id:idcliente,
+            url : './session/save', //Here you will fetch records 
+            data : {  idCliente:idCliente,
                     }, 
             success : function(data){
                JSON.parse(data);
@@ -44,6 +40,8 @@
             });
          
       })
+
+      /*
 
 //ALTA NUEVO CONTROL  
 
@@ -239,9 +237,7 @@
       });
 
 
-   });
-
-   ('#')
+   });*/
 
 });
 

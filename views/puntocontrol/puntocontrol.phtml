@@ -1,5 +1,6 @@
 <?php
-    include("./views/header-int-fc.phtml"); 
+    include("./views/header-int-fc.phtml");
+var_dump($objetivos);
  ?>
 <section class="alt-font padding-60px-tb md-padding-40px-tb full-screen">
             <div class="container">
@@ -9,10 +10,18 @@
                             <select class="form-control ml-4 clienteControl" id="cliente" name="cliente">
                             <option value="" selected="true" disabled="disabled" >Seleccione un cliente</option>
                                 <?php
-                                
-                                    foreach($cliente as $fila=>$valor){
-                                        echo '<option class="cliente" value="'.$valor['codigo'].'">'.$valor['nombre'].'</option>';
-                                    } 
+                                    if($_SESSION['idCliente']){
+                                        foreach ($cliente as $clave => $v){
+                                            if ($_SESSION['idCliente'] == $v['codigo']){
+                                                echo '<option class="opt-cliente" value="'. $v['codigo'] .'" selected="true"> '. $v['nombre'] .'</option>';
+                                            }
+                                            echo '<option class="opt-cliente" value="'. $v['codigo'] .'"> '. $v['nombre'] .'</option>';
+                                        }
+                                    } else {
+                                        foreach ($cliente as $clave => $v){
+                                            echo '<option class="opt-cliente" value="'. $v['codigo'] .'"> '. $v['nombre'] .'</option>';
+                                        }
+                                    }
                                 ?>
                             </select>
                     </div>
@@ -24,12 +33,7 @@
                         <label class="mb-4">Objetivo</label>
                             <select id="objetivo" class="form-control ml-4" placeholder="Objetivo" name="objetivo">
                                 <option value="" selected="true" disabled="disabled" >Seleccione un objetivo</option>
-                                <?php
-                                
-                                    foreach($objetivo as $fila=>$valor){
-                                        echo '<option class= "cliente" value="'.$valor['objetivo'].'">'.$valor['nombre'].'</option>';
-                                    } 
-                                ?>
+
                             </select>
                     </div>
                     <div class="form-group mx-sm-3 bg-warning col-12 justify-content-end">
@@ -50,7 +54,7 @@
                     </thead>
                     <tbody>
                         <?php 
-                            foreach($controlClientes as $fila=>$valor){
+                            /*foreach($controlClientes as $fila=>$valor){
                                 echo '<tr>';
                                 echo '<td class="id">'.$valor['id'].'</td>';
                                 echo '<td class="nombre">'.$valor['nombre'].'</td>';
@@ -58,7 +62,7 @@
                                 echo '<td><button class="modalControl btn btn-info rounded-pill" data-id="'.$valor['id'].'">Editar</button></td>';
                                 echo '<td><button class="eliminarControl btn btn-danger rounded-pill" data-id="'.$valor['id'].'">Eliminar</button></td>';
                                 echo '</tr>';
-                            }
+                            }*/
                         ?>
                     </tbody>
                 </table>
@@ -87,9 +91,7 @@
                                     <label for="objetivo" class="col-form-label">Objetivo</label>
                                     <select class="form-control" id="modificarObjetivo">
                                     <?php
-                                        foreach($objetivos as $fila=>$valor){
-                                            echo '<option id="objetivo" value="'.$valor['nombre'].'">'.$valor['nombre'].'</option>';
-                                        } 
+
                                     ?>
                                     </select>
                                 </div>

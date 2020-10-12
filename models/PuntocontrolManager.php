@@ -10,7 +10,10 @@ class PuntocontrolManager extends Db{
         }
 
         public function listarObjetivos($idCliente){
-            $query="SELECT * FROM clientes_por_objetivo WHERE cliente = $idCliente";
+            $query="SSELECT LTRIM(RTRIM(obj.nombre)) AS 'nombre_objetivo', obj.codigo AS 'codigo_objetivo' FROM dbo.clientes_por_objetivo AS cli
+                    LEFT JOIN objetivos obj ON obj.codigo = cli.objetivo
+                    INNER JOIN clientes c ON c.codigo = cli.cliente
+                    WHERE cli.cliente = $idCliente";
 
             return Db::queryAll($query);
 

@@ -53,7 +53,7 @@ abstract class Controller
         {
             extract($this->protect($this->data));
             extract($this->data, EXTR_PREFIX_ALL, "");
-            require("views/" . $this->view . ".phtml");
+            require_once("views/" . $this->view . ".phtml");
         }
         else
         {
