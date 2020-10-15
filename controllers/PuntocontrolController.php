@@ -15,7 +15,10 @@ class PuntocontrolController extends Controller
             case 'listarobjetivo':
                 $this->listarObjetivos($_POST);exit();    
                 break;  
-                default:
+            case 'tablacontrolCliente':
+                $this->tablaControlCliente($_POST);exit();    
+                break;          
+            default:
         }  
 	   
         $this->data['title'] = "";
@@ -31,7 +34,7 @@ class PuntocontrolController extends Controller
 
     }
 
-    /* ----EMPIEZAN LAS FUNCIONES----- */
+/***** ----------EMPIEZAN LAS FUNCIONES---------- *****/
 
     //OBTENGO LOS CLIENTES
     public function getClientes(){
@@ -51,9 +54,23 @@ class PuntocontrolController extends Controller
 
         $listarObjetivos = new PuntocontrolManager();
 
-        $array = "hola";
+        echo json_encode($listarObjetivos->listarObjetivos($idCliente));
+    }
 
-        return $array;
+
+
+    //CARGAMOS LA TABLA DE CONTROLES SEGUN EL CLIENTE SELECCIONADO
+    public function tablaControlCliente($data){
+
+        $idCliente = $data['id_cliente'];
+        $idobjetivoCliente = $data['id_objetivo'];
+
+        $tablaControlCliente = new PuntocontrolManager();
+
+        $result = $tablaControlCliente->getControlCliente($idCliente,$idobjetivoCliente);
+
+        echo json_encode($result);
+
     }
 
 
@@ -61,24 +78,26 @@ class PuntocontrolController extends Controller
     //CARGO UN NUEVO CONTROL
     public function cargaControl($data) {
         
-        $date = date("Y-m-d H:i:s");
+        $date = date("Y-m-d");
 
         $idcliente = $data['id'];
         $nombre = $data['nombre'];
+        $id_objetivo = $data['id_objetivo'];
         $objetivo = $data['objetivo'];
         $fecha = $date;
 
-        var_dump($fecha);
-
         $control = new PuntocontrolManager;
+            
+        $carga = $control->cargaControl($idcliente,$nombre,$id_objetivo,$objetivo,$fecha);
         
-        $carga = $control->cargaControl($idcliente,$nombre,$objetivo,$fecha);
-
         if($carga){
             echo "Control cargado correctamente";
         }else{
             echo "Error al cargar el control";
         }
+            
+
+       
     }
     
 
@@ -91,14 +110,20 @@ class PuntocontrolController extends Controller
 
         $control = new PuntocontrolManager;
 
-        $eliminaControl = $control->eliminarControl($idcambiarEstado);
+        $consultaControl = $control->issetControl($idcambiarEstado);
 
-        if($eliminaControl){
-            return "Control eliminado correctamente";
+        if (!$consultaControl){
+
+            $eliminaControl = $control->eliminarControl($idcambiarEstado);
+
+            if($eliminaControl){
+                echo "Control eliminado correctamente";
+            }else{
+                echo "Error al eliminar el control";
+            }
         }else{
-            return "Error al eliminar el control";
+            echo "<script> alert('Control asociado a una ronda') </script>";
         }
-
     }
 
 
@@ -106,9 +131,11 @@ class PuntocontrolController extends Controller
     public function actualizaControl($data){
 
         $actualizoControl = array (
+            'id'=> $data['id'],
             'nombre'=> $data['nombre'],
-            'objetivo'=> $data['objetivo'],
-            'id'=> $data['id']
+            'id_objetivo'=> $data['id_objetivo'],
+            'objetivo'=>$data['objetivo']
+            
         );
 
         $control = new PuntocontrolManager;

@@ -4,10 +4,10 @@
 <section class="alt-font padding-60px-tb md-padding-40px-tb full-screen">
             <div class="container">
                 <form class="form-inline" method="POST">
-                    <div class="form-group mx-sm-3 bg-info">
-                        <label class="mb-4">Cliente</label>
+                    <div class="form-group mx-sm-3 ">
+                        <label class="mb-2">Cliente</label>
                             <select class="form-control ml-4 clienteControl" id="cliente" name="cliente">
-                            <option value="" selected="true" disabled="disabled" >Seleccione un cliente</option>
+                            <option value="" selected="true" disabled="disabled" required>Seleccione un cliente</option>
                                 <?php
                                 
                                     foreach($cliente as $fila=>$valor){
@@ -16,25 +16,20 @@
                                 ?>
                             </select>
                     </div>
-                    <div class="form-group bg-danger">
-                        <label class="mb-4">Nombre</label>
-                        <input type="text" id="nombreControl" class="form-control ml-4" placeholder="Nombre" name="nombre-punto-control">
-                    </div>
-                    <div class="form-group mx-sm-3 bg-success">
-                        <label class="mb-4">Objetivo</label>
-                            <select id="objetivo" class="form-control ml-4" placeholder="Objetivo" name="objetivo">
-                                <option value="" selected="true" disabled="disabled" >Seleccione un objetivo</option>
-                                <?php
-                                
-                                    foreach($objetivo as $fila=>$valor){
-                                        echo '<option class= "cliente" value="'.$valor['objetivo'].'">'.$valor['nombre'].'</option>';
-                                    } 
-                                ?>
+                    <div class="form-group mx-sm-3" required>
+                        <label class="mb-2">Objetivo</label>
+                            <select id="objetivo" class="form-control ml-4 objetivoCliente" placeholder="Objetivo" name="objetivo" required>
+                                <option value="" selected="true" disabled="disabled">Seleccione un objetivo</option>
                             </select>
                     </div>
-                    <div class="form-group mx-sm-3 bg-warning col-12 justify-content-end">
-                        <button type="button" class="btn btn-primary mb-4 ml-4 rounded-pill verControl">Ver Controles</button>
-                        <button type="button" class="btn btn-success mb-4 ml-4 rounded-pill agregarControl">Agregar Control</button>
+                    <div class="form-group col-6" style="display:none" id="nombreControl" >
+                        <label class="mb-2">Nombre</label>
+                        <input id="nombre-punto-control" type="text" class="form-control ml-3 " placeholder="Nombre" name="nombre-punto-control" required>
+                    </div>
+                    <div class="form-group mx-sm-3 col-12 justify-content-start ">
+                        <button type="button" id="agregarControl" class="btn btn-info mb-4 ml-4 rounded-pill agregarControl">Agregar Control</button>
+                        <button type="button" id="guardarControlbtn" class="btn btn-success mb-4 ml-4 rounded-pill guardarControl" style="display:none">Guardar Control</button>
+                        <button type="button" id="cancelarCargaControlbtn" class="btn btn-danger mb-4 ml-4 rounded-pill cancelarCarga" style="display:none">Cancelar</button>
                     </div>
                 </form>
 
@@ -48,22 +43,9 @@
                             <th scope="col"></th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <?php 
-                            foreach($controlClientes as $fila=>$valor){
-                                echo '<tr>';
-                                echo '<td class="id">'.$valor['id'].'</td>';
-                                echo '<td class="nombre">'.$valor['nombre'].'</td>';
-                                echo '<td class="objetivo">'.$valor['objetivo'].'</td>';
-                                echo '<td><button class="modalControl btn btn-info rounded-pill" data-id="'.$valor['id'].'">Editar</button></td>';
-                                echo '<td><button class="eliminarControl btn btn-danger rounded-pill" data-id="'.$valor['id'].'">Eliminar</button></td>';
-                                echo '</tr>';
-                            }
-                        ?>
-                    </tbody>
                 </table>
 
-                <div class="modal fade" id="actualizarControlModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal fade" id="actualizarControlModal" tabindex="-1" role="dialog" aria-hidden="true">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                         <div class="modal-header">
@@ -86,11 +68,7 @@
                                 <div class="form-group">
                                     <label for="objetivo" class="col-form-label">Objetivo</label>
                                     <select class="form-control" id="modificarObjetivo">
-                                    <?php
-                                        foreach($objetivos as $fila=>$valor){
-                                            echo '<option id="objetivo" value="'.$valor['nombre'].'">'.$valor['nombre'].'</option>';
-                                        } 
-                                    ?>
+                                    <option id="optobjetivo"value="" selected="true" disabled="disabled" required>Seleccione un objetivo</option>
                                     </select>
                                 </div>
                             </form>
