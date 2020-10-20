@@ -1,6 +1,11 @@
 <?php
     include("./views/header-int-fc.phtml"); 
  ?>
+ <div class="row">
+        <div style="background-color: #dddddd" class="col-12 p-5">
+            <h4 style="color:#00405d; margin-left:20%">Puntos de Control</h4>
+        </div>
+    </div>
 <section class="alt-font padding-60px-tb md-padding-40px-tb full-screen">
             <div class="container">
                 <form class="form-inline" method="POST">
@@ -33,16 +38,18 @@
                     </div>
                 </form>
 
-                <table class="table" id="tabla-control">
+                <table class="table col-12 text-center" id="tabla-control">
                     <thead class="thead-dark">
                         <tr>
                             <th scope="col">ID</th>
                             <th scope="col">Nombre</th>
                             <th scope="col">Objetivo</th>
-                            <th scope="col">Opciones</th>
                             <th scope="col"></th>
+
                         </tr>
                     </thead>
+                    <tbody>
+                    </tbody>
                 </table>
 
                 <div class="modal fade" id="actualizarControlModal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -66,7 +73,7 @@
                                     <input type="text" class="form-control" id="controlActualizar">
                                 </div>
                                 <div class="form-group">
-                                    <label for="objetivo" class="col-form-label">Objetivo</label>
+                                    <label class="col-form-label">Objetivo</label>
                                     <select class="form-control" id="modificarObjetivo">
                                     <option id="optobjetivo"value="" selected="true" disabled="disabled" required>Seleccione un objetivo</option>
                                     </select>
@@ -74,8 +81,8 @@
                             </form>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
-                            <button type="button" class="btn btn-primary modificarControl">Modificar</button>
+                            <button type="button" class="btn btn-danger rounded-pill" data-dismiss="modal">Cancelar</button>
+                            <button type="button" class="btn btn-primary rounded-pill modificarControl">Modificar</button>
                         </div>
                         </div>
                     </div>

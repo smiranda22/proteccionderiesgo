@@ -1,5 +1,4 @@
 <?php
-//session_destroy();
 class PuntocontrolController extends Controller
 {
 	public function process($params){
@@ -95,9 +94,7 @@ class PuntocontrolController extends Controller
         }else{
             echo "Error al cargar el control";
         }
-            
-
-       
+              
     }
     
 
@@ -112,8 +109,7 @@ class PuntocontrolController extends Controller
 
         $consultaControl = $control->issetControl($idcambiarEstado);
 
-        if (!$consultaControl){
-
+        if ($consultaControl==0){
             $eliminaControl = $control->eliminarControl($idcambiarEstado);
 
             if($eliminaControl){
@@ -121,8 +117,10 @@ class PuntocontrolController extends Controller
             }else{
                 echo "Error al eliminar el control";
             }
-        }else{
-            echo "<script> alert('Control asociado a una ronda') </script>";
+        }else{ 
+           
+            $controlAsignado = true;
+
         }
     }
 

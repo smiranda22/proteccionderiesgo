@@ -1,0 +1,158 @@
+<?php
+    include("./views/header-int-fc.phtml"); 
+ ?>
+
+<div class="row">
+        <div style="background-color: #dddddd" class="col-12 p-5">
+            <h4 style="color:#00405d; margin-left:20%">Administracion de Rondas</h4>
+        </div>
+    </div>
+<section class="alt-font padding-60px-tb md-padding-40px-tb full-screen">
+            <div class="container">
+                <form class="form-inline" method="POST">
+                    <div class="form-group mx-sm-3 ">
+                        <label class="mb-2">Clientes:</label>
+                            <select class="form-control ml-4 ClienteRondas" id="clienteRondas" name="cliente">
+                            <option value="" selected="true"  disabled="disabled" required>Seleccione un cliente</option>
+                                <?php
+                                
+                                    foreach($cliente as $fila=>$valor){
+                                        echo '<option class="cliente" value="'.$valor['codigo'].'">'.$valor['nombre'].'</option>';
+                                    } 
+                                ?>
+                            </select>
+                            <a href="../ronda/nuevaronda" type="button" id="agregarRonda" class="btn btn-info mb-4 ml-4 rounded-pill agregarRonda">Agregar Ronda</a>
+                    </div>
+                </form>
+               <div class="container">
+                <table class="table" id="tabla-rondas-cliente">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">Nombre Ronda</th>
+                                <th scope="col">Fecha Creacion</th>
+                                <th scope="col">Estado</th>
+                                <th class="text-center" scope="col"></th>
+                                <th class="text-center" scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        
+                        </tbody>
+                    </table>
+                        
+               </div>                     
+
+                <div class="modal fade" id="actualizarControlModal" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Modificar control</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="POST">
+
+                                <div class="form-group" >
+                                    <label id="idControl" class="col-form-label">ID</label>
+                                    <input type="text" class="form-control" id="idControlActulizar" readonly>
+                                </div>
+                                <div class="form-group" >
+                                    <label id="modificarNombre" class="col-form-label">Nombre</label>
+                                    <input type="text" class="form-control" id="controlActualizar">
+                                </div>
+                                <div class="form-group">
+                                    <label for="objetivo" class="col-form-label">Objetivo</label>
+                                    <select class="form-control" id="modificarObjetivo">
+                                    <option id="optobjetivo"value="" selected="true" disabled="disabled" required>Seleccione un objetivo</option>
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                            <button type="button" class="btn btn-primary modificarControl">Modificar</button>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modalRonda" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalRondaTitle">Modificación de Ronda</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="POST">
+                                <div class="form-group" >
+                                    <label class="col-form-label">ID</label>
+                                    <input type="text" class="form-control" id="idRonda" readonly>
+                                </div>
+                                <div class="form-group" >
+                                    <label class="col-form-label">Nombre</label>
+                                    <input type="text" class="form-control" id="nombreRonda">
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">Estado</label>
+                                    <select class="form-control" id="selectEstadosRonda">
+                                    <option id="optestado" value="" disabled="disabled">Seleccione un estado</option>
+                                    <option id="optestado1" value="1">Activo</option>
+                                    <option id="optestado0" value="0">Inactivo</option>
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger rounded-pill" data-dismiss="modal">Cancelar</button>
+                            <button type="button" class="btn btn-primary rounded-pill" onClick="editarRonda()">Modificar</button>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="modal fade bd-example-modal-lg" id="listarItemRondaModal" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title-items" id="modalRondaTitle"></h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body text-center ">
+                            <table id="tablaModalItemsRonda" class="table table-bordered">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th class="p-2" scope="col">Punto de Control</th>
+                                        <th class="p-2" scope="col">Orden</th>
+                                        <th class="p-2" scope="col">tiempo</th>
+                                        <th class="p-2" scope="col">qr</th>
+                                        <th class="p-2" scope="col">alive</th>
+                                        <th class="p-2" scope="col">llegue</th>
+                                        <th class="p-2" scope="col">Objetivo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger rounded-pill" data-dismiss="modal">Cancelar</button>
+                            <button type="button" class="btn btn-primary rounded-pill" onClick="editarRonda()">Modificar</button>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+</section>
+<!-- start footer -->
+<?php //include("./views/footer.phtml"); ?>

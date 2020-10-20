@@ -7,27 +7,43 @@ class RondaController extends Controller{
             case 'puntoscontrolCliente':
                 $this->getPuntosContorlCliente($_POST);exit();
             break;
+            case 'objetivosRondaCliente':
+                $this->getObjetivosRondaCliente($_POST);exit();
+            break;
             case 'guardoronda':
                 $this->guardoRonda($_POST);exit();
             break;
-            default:
-        break;
-        } 
-    
-
-
-        $this->data['title'] = "";
-        $this->data['content'] = "";
-
-        $this->view = 'ronda';
-
-        //Obtengo los clientes para el option de Clientes
-        $clientes = $this->getClientes();
-
-        $this-> data['cliente'] = $clientes;
-
+            case 'rondacliente':
+                $this->rondasCliente($_POST);exit();
+            break;
+            case 'editarronda':
+                $this->editarRonda($_POST);exit();
+            break;
+            case 'eliminarRonda':
+                $this->eliminarRonda($_POST);exit();
+            break;
+            case 'itemsRonda':
+                $this->itemsRonda($_POST);exit();
+            break;
+            case 'objetivosModal':
+                $this->objetivosModal($_POST);exit();
+            break;
+            case 'nuevaronda':
+                $this->view = 'ronda/nuevaronda'; 
+            break;
+            default: 
+                $this->data['title'] = "";
+                $this->data['content'] = "";
+        
+                $this->view = 'ronda/configuracion';
+           
+        
     }
-
+      //Obtengo los clientes para el option de Clientes
+      $clientes = $this->getClientes();
+        
+      $this-> data['cliente'] = $clientes;
+}
 /************* COMIENZAN LOS SCRIPTS *************/
 
    //OBTENGO LOS CLIENTES PARA LAS RONDAS 
@@ -47,34 +63,97 @@ class RondaController extends Controller{
    public function getPuntosContorlCliente($data){
 
         $idCliente = $data['id_cliente'];
+        $objetivoCliente = $data['objetivoCliente'];
 
         $puntoCliente = new RondaManager;
 
-        echo json_encode($puntoControlCliente = $puntoCliente -> getPuntosControlCliente($idCliente));
+        $result = $puntoCliente -> getPuntosControlCliente($idCliente,$objetivoCliente);
 
+        echo json_encode($result);
 
    }
 
+
+   
    public function guardoRonda($data){
        
         $date = date("Y-m-d");
 
         $cargarRondas = new RondaManager;
 
-        foreach($data as $ronda => $datos){
-            foreach($datos as $indice => $valor)
-            {
-                    $nombre = $valor['nombreRonda'];
-                    $idCliente = $valor['idCliente'];
-                    $idControl = $valor['idControl'];
-                    $fecha = $date;
-            }
-        }
-        
-        echo $cargaRonda = $cargarRondas -> cargaRonda($nombre,$idCliente,$idControl,$fecha);
-       
+        $datos=$cargarRondas->cargaRonda($data);
+
+        echo json_encode($datos);
    }
 
+
+   public function rondasCliente($data){
+
+        $idClienteRonda = $data['id'];
+
+        $ronda = new RondaManager;
+
+        $rondasCliente = $ronda->getRondas($idClienteRonda);
+
+        echo json_encode($rondasCliente);
+   }
+
+   public function editarRonda($data){
+
+       $idRonda = $data['idRonda'];
+       $nombreRonda = $data['nombreRonda'];
+       $estadoRonda = $data['estadoRonda'];
+
+       $upadteRonda = new RondaManager;
+
+       $rondaUpdate = $upadteRonda->updateRonda($idRonda, $nombreRonda, $estadoRonda);
+
+       echo json_encode($rondaUpdate);
+   }
+
+   public function eliminarRonda($data){
+
+        $idRonda = $data['idRonda'];
+
+        $deleteRonda = new RondaManager;
+
+        $rondaDelete = $deleteRonda->deleteRonda($idRonda);
+
+        echo json_encode($rondaDelete);
+
+   }
+
+   public function itemsRonda($data){
+
+        $idRonda = $data['idRonda'];
+
+        $listItemRonda = new RondaManager;
+
+        $listarRondaItems = $listItemRonda->listarItemsRonda($idRonda);
+
+        echo json_encode($listarRondaItems);
+   }
+
+   public function getObjetivosRondaCliente($data){
+        
+        $idClienteRonda = $data['id_cliente'];
+
+        $selectObjetivos = new RondaManager;
+
+        $selectObjetivosCliente = $selectObjetivos->listarObjetivosCliente($idClienteRonda);
+
+        echo json_encode($selectObjetivosCliente);
+   }
+
+   public function objetivosModal($data){
+       $idClienteModal = $data['id'];
+
+       $objetivosCliente = new RondaManager;
+
+       $objetivosClienteModal = $objetivosCliente -> listarObjetivosCliente($idClienteModal);
+
+       echo json_encode($objetivosClienteModal);
+   }
+
+
 }
-
-

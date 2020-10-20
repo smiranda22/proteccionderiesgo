@@ -59,10 +59,10 @@ class PuntocontrolManager extends Db{
 
 
     //PREGUNTAMOS SI UN PUNTO DE CONTROL ESTA ASIGNADO A UNA RONDA
-        public function issetControl($idCliente){
-            $query = "SELECT * FROM rondas WHERE id_punto_control = :id";
+        public function issetControl($idPuntoControl){
+            $query = "SELECT count(*) FROM rondas WHERE id_punto_control = :id";
 
-            return Db::queryOne($query,$idCliente);
+            return Db::queryOne($query,$idPuntoControl);
         }
 
 }
