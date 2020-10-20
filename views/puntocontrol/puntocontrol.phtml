@@ -1,5 +1,6 @@
 <?php
-    include("./views/header-int-fc.phtml"); 
+    include("./views/header-int-fc.phtml");
+var_dump($objetivos);
  ?>
  <div class="row">
         <div style="background-color: #dddddd" class="col-12 p-5">
@@ -14,10 +15,18 @@
                             <select class="form-control ml-4 clienteControl" id="cliente" name="cliente">
                             <option value="" selected="true" disabled="disabled" required>Seleccione un cliente</option>
                                 <?php
-                                
-                                    foreach($cliente as $fila=>$valor){
-                                        echo '<option class="cliente" value="'.$valor['codigo'].'">'.$valor['nombre'].'</option>';
-                                    } 
+                                    if($_SESSION['idCliente']){
+                                        foreach ($cliente as $clave => $v){
+                                            if ($_SESSION['idCliente'] == $v['codigo']){
+                                                echo '<option class="opt-cliente" value="'. $v['codigo'] .'" selected="true"> '. $v['nombre'] .'</option>';
+                                            }
+                                            echo '<option class="opt-cliente" value="'. $v['codigo'] .'"> '. $v['nombre'] .'</option>';
+                                        }
+                                    } else {
+                                        foreach ($cliente as $clave => $v){
+                                            echo '<option class="opt-cliente" value="'. $v['codigo'] .'"> '. $v['nombre'] .'</option>';
+                                        }
+                                    }
                                 ?>
                             </select>
                     </div>
