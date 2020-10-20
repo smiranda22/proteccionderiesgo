@@ -23,12 +23,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0e838d6e-7cb2-43f8-b809-029d5ead4a31" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/controllers/Controller.php" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/Controller.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controllers/PuntocontrolController.php" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/PuntocontrolController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/js/proteccion.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/proteccion.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/PuntocontrolManager.php" beforeDir="false" afterPath="$PROJECT_DIR$/models/PuntocontrolManager.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/layout.phtml" beforeDir="false" afterPath="$PROJECT_DIR$/views/layout.phtml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/puntocontrol/puntocontrol.phtml" beforeDir="false" afterPath="$PROJECT_DIR$/views/puntocontrol/puntocontrol.phtml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -87,6 +83,7 @@
       <option name="presentableId" value="Default" />
       <updated>1602456321259</updated>
       <workItem from="1602456322416" duration="30788000" />
+      <workItem from="1603234530756" duration="1176000" />
     </task>
     <servers />
   </component>
@@ -103,6 +100,7 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
     <state x="263" y="19" key="#CLI_Interpreters" timestamp="1602465473375">
@@ -215,10 +213,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="667" y="253" width="585" height="558" key="find.popup/1920.78.1366.728/0.0.1920.1040@0.0.1920.1040" timestamp="1602515188805" />
-    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1602484392750">
+    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1603234792188">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/1920.78.1366.728/0.0.1920.1040@0.0.1920.1040" timestamp="1602484392750" />
+    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/1920.78.1366.728/0.0.1920.1040@0.0.1920.1040" timestamp="1603234792188" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -230,12 +228,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="php">
           <url>file://$PROJECT_DIR$/controllers/PuntocontrolController.php</url>
-          <line>5</line>
+          <line>4</line>
           <option name="timeStamp" value="14" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="php">
           <url>file://$PROJECT_DIR$/controllers/PuntocontrolController.php</url>
-          <line>18</line>
+          <line>20</line>
           <option name="timeStamp" value="15" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="php">
