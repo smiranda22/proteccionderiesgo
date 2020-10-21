@@ -77,7 +77,7 @@ function listarRondasCliente(id = null) {
             <td id="nombvbe">${e.nombre}</td> 
             <td>${e.fecha}</td>
             <td><span class="badge badge-pill badge-${estilo_estado}">${estado}</span></td> 
-            <td class="text-center"><button class="btn listarRondaModal" onClick="listarItemsRonda(${e.id},'${e.nombre}'); objetivosModal()"><i class="fa fa-eye" style="color:#2271B3"></i></button></td>
+            <td class="text-center"><button class="btn listarRondaModal" onClick="listarItemsRonda(${e.id},'${e.nombre}')"><i class="fa fa-eye" style="color:#2271B3"></i></button></td>
             <td class="text-center">
             <button class="btn btn-warning rounded-pill" onClick="modalEditarRonda(${e.id},'${e.nombre}',${e.estado})">Editar</button>
             <button class="btn btn-danger rounded-pill ml-4" onClick="eliminarRonda(${e.id})">Eliminar</button>
@@ -88,16 +88,12 @@ function listarRondasCliente(id = null) {
    });
 }
 
-function objetivosModal(){
-   var idCliente = $('#clienteRondas').val();
-
-   console.log (idCliente);
-}
 
 function listarItemsRonda(id, nombredeRonda) {
 
    let idRonda = id;
    let nombreRonda = nombredeRonda;
+   let idCliente = $('#clienteRondas').val();
 
 
    $("#tablaModalItemsRonda tbody").empty();
@@ -115,8 +111,11 @@ function listarItemsRonda(id, nombredeRonda) {
 
          $.map($datos, function (e, i) {
 
+            let selectObjetivosId = 'objetivostableModal'+i;
+            let puntoControlId = 'puntoControlModal'+i;
+
             $("#tablaModalItemsRonda tbody").append(`<tr">
-            <td><select id="puntoControlTabla"><option>${e.nombre}</option></select></td> 
+            <td><select id="${puntoControlId}"><option selected=selected value="${e.puntocontrol_id}">${e.nombre}</option></select></td> 
             <td style="width:10px"><input value="${e.orden}"></input></td>
             <td style="width:75px"><input value="${e.tiempo}"></input></td>
             <td>  
@@ -138,11 +137,16 @@ function listarItemsRonda(id, nombredeRonda) {
             </div>
             </td>
             <td>
-            <select id="objetivostableModal">
-            <option>${e.objetivo}</option>
+            <select id="${selectObjetivosId}">
+            <option value="${e.id_objetivo}" selected=selected>${e.objetivo}</option>
             </select>
             </td> 
             </tr>`);
+
+            objetivosModal(idCliente,selectObjetivosId,e.id_objetivo,puntoControlId, e.puntocontrol_id);
+            selectPuntosControl(selectObjetivosId, idCliente, puntoControlId, e.puntocontrol_id);
+
+
          });
 
       }
@@ -346,8 +350,61 @@ function eliminarRonda(id) {
    }
 }
 
+function objetivosModal(idClienteRonda, selectObjetivosId, idObjetivo, puntoControlId, idPuntoControl) {
+
+
+      $.ajax({
+         type: "post",
+         url: "objetivosModal",
+         data: {
+            id: idClienteRonda
+         },
+         success: function (data) {
+            let datos = JSON.parse(data);
+            $.map(datos, function (e,i){
+               if(idObjetivo != e.codigo_objetivo){
+                  $("#"+selectObjetivosId+"").append("<option value=" + e.codigo_objetivo + ">" + e.nombre_objetivo + "</option>")
+               }
+               $("#"+selectObjetivosId+"").on("change", function (){
+                    $("#"+puntoControlId+"").empty();
+                  selectPuntosControl(selectObjetivosId, idClienteRonda, puntoControlId,idPuntoControl);
+               })
+            })
+
+         }
+      });
+}
+
+function selectPuntosControl(selectObjetivo, idClienteRonda, SelectpuntoControlId, idPuntoControl){
+   let objetivosIdModal = $("#"+selectObjetivo+" option:selected ").val();
+
+
+    $.ajax({
+         type: "post",
+         url: "puntoscontrolCliente",
+         data: {
+            objetivoCliente: objetivosIdModal,
+            id_cliente:idClienteRonda
+         },
+         success: function (data) {
+
+            let datos = JSON.parse(data);
+            $.map(datos, function (e,i) {
+               console.log(e.id == idPuntoControl);
+               if(idPuntoControl !== e.id) {
+                  $("#" + SelectpuntoControlId + "").append("<option value=" + e.id + ">" + e.nombre + "</option>")
+               }
+            });
+         }
+      });
+
+}
+
+
 
 ////////////////////// COMIENZA DOCUMENT READY////////////////////
+
+
 
 $(document).ready(function () {
 
@@ -629,29 +686,6 @@ $(document).ready(function () {
    });
 
 
-   
-   $('.listarRondaModal').on('click', function () {
 
-      let idClienteRonda = $('#clienteRondas').val();
-
-      console.log(idClienteRonda);
-
-
-      $.ajax({
-         type: "post",
-         url: "objetivosModal",
-         data: {
-            id: idClienteRonda
-         },
-         success: function (data) {
-            for (let i = 0; i < data.length; i++) {
-               $("#objetivostableModal").append("<option value=" + data[i].codigo_objetivo + ">" + data[i].nombre_objetivo + "</option>")
-            }
-         }
-      });
-
-   })
-
-   
 
 });   

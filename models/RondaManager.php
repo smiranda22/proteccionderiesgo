@@ -80,9 +80,15 @@ class RondaManager{
        }
 
        public function listarItemsRonda($idRonda){
-           $query = "SELECT puntoscontrol.nombre, item_ronda.orden, item_ronda.tiempo, item_ronda.qr, item_ronda.nfc, item_ronda.llegue, puntoscontrol.objetivo 
-                     FROM item_ronda 
-                     INNER JOIN puntoscontrol ON item_ronda.id_puntocontrol = puntoscontrol.id WHERE id_ronda = '".$idRonda."'";
+           $query = "SELECT 
+puntoscontrol.id AS puntocontrol_id,
+puntoscontrol.nombre,
+item_ronda.orden, 
+item_ronda.tiempo, 
+item_ronda.qr, item_ronda.nfc, item_ronda.llegue, puntoscontrol.objetivo, puntoscontrol.id_objetivo
+FROM item_ronda
+INNER JOIN puntoscontrol ON item_ronda.id_puntocontrol = puntoscontrol.id
+WHERE id_ronda  = '".$idRonda."'";
 
             return Db::queryAll($query);
        }
