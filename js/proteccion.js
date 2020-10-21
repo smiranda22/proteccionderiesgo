@@ -398,7 +398,8 @@ $(document).ready(function () {
          success: function (data) {
             let datos = JSON.parse(data);
             $.map(datos, function (e, i) {
-               $("#objetivo").append("<option value=" + e.codigo_objetivo + ">" + e.nombre_objetivo + "</option>")
+               $("#objetivo").append("<option value=" + e.codigo_objetivo + ">" + e.nombre_objetivo + "</option>"),
+               $("#modificarObjetivo").append("<option value=" + e.codigo_objetivo + ">" + e.nombre_objetivo + "</option>")
             })
          }
       });
