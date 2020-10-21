@@ -391,16 +391,15 @@ $(document).ready(function () {
       $.ajax({
          type: 'post',
          cache: false,
-         dataType: "json",
          url: 'puntocontrol/listarobjetivo',
          data: {
-            id: idcliente,
+            idcliente: idcliente,
          },
          success: function (data) {
-            for (var i = 0; i < data.length; i++) {
-               $("#objetivo").append("<option value=" + data[i].codigo_objetivo + ">" + data[i].nombre_objetivo + "</option>"),
-                  $("#modificarObjetivo").append("<option value=" + data[i].codigo_objetivo + ">" + data[i].nombre_objetivo + "</option>")
-            }
+            let datos = JSON.parse(data);
+            $.map(datos, function (e, i) {
+               $("#objetivo").append("<option value=" + e.codigo_objetivo + ">" + e.nombre_objetivo + "</option>")
+            })
          }
       });
       $("#objetivo option").not(':first').remove();

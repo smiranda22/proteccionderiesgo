@@ -27,10 +27,10 @@ class PuntocontrolController extends Controller
         $this->view = 'puntocontrol/puntocontrol';
 
 
-        if ($_SESSION['idCliente']){
+       /* if ($_SESSION['idCliente']){
             $idCliente = $_SESSION['idCliente'];
             $this->listarObjetivos($idCliente);
-        }
+        }*/
             //Obtengo los clientes para el option de Clientes
             $clientes = $this->getClientes();
 
@@ -55,11 +55,11 @@ class PuntocontrolController extends Controller
     //LISTO LOS OBJETIVOS SEGUN EL CLIENTE
     public function listarObjetivos($data){
 
-        $idCliente = $data['idCliente'];
-
+        $idCliente = $data['idcliente'];
         $listarObjetivos = new PuntocontrolManager();
 
         echo json_encode($listarObjetivos->listarObjetivos($idCliente));
+
     }
 
 
