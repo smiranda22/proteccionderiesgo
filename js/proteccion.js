@@ -49,6 +49,8 @@ function listarPuntosControlCliente(id = null, objetivo = null) {
    });
 }
 
+//LISTAMOS LAS RONDAS SEGUN EL CLIENTE SELECCIONADO
+
 function listarRondasCliente(id = null) {
 
 
@@ -74,7 +76,7 @@ function listarRondasCliente(id = null) {
             let estilo_estado = (e.estado == 0) ? 'danger' : 'success';
             let estado = (e.estado == 0) ? 'Inactivo' : 'Activo';
             $("#tabla-rondas-cliente tbody").append(`<tr>
-            <td id="nombvbe">${e.nombre}</td> 
+            <td id="nombre">${e.nombre}</td> 
             <td>${e.fecha}</td>
             <td><span class="badge badge-pill badge-${estilo_estado}">${estado}</span></td> 
             <td class="text-center"><button class="btn listarRondaModal" onClick="listarItemsRonda(${e.id},'${e.nombre}')"><i class="fa fa-eye" style="color:#2271B3"></i></button></td>
@@ -88,6 +90,8 @@ function listarRondasCliente(id = null) {
    });
 }
 
+
+//LLENAMOS LA TABLA DE MODAL DE LA RONDA CON LOS DATOS ITEMS DE RONDA
 
 function listarItemsRonda(id, nombredeRonda) {
 
@@ -111,39 +115,44 @@ function listarItemsRonda(id, nombredeRonda) {
 
          $.map($datos, function (e, i) {
 
-            let selectObjetivosId = 'objetivostableModal'+i;
-            let puntoControlId = 'puntoControlModal'+i;
+            let selectObjetivosId = 'objetivostableModal' + i;
+            let puntoControlId = 'puntoControlModal' + i;
 
             $("#tablaModalItemsRonda tbody").append(`<tr">
-            <td><select id="${puntoControlId}"><option selected=selected value="${e.puntocontrol_id}">${e.nombre}</option></select></td> 
-            <td style="width:10px"><input value="${e.orden}"></input></td>
-            <td style="width:75px"><input value="${e.tiempo}"></input></td>
+            <td style="display:none"><input value="${e.id}"></input></td>
+            <td style="width:400px"><select id="${puntoControlId}"><option selected=selected value="${e.puntocontrol_id}">${e.nombre}</option></select></td> 
+            <td style="width:15px"><input value="${e.orden}" name = "orden"></td>
+            <td style="width:75px"><input value="${e.tiempo}" name = "tiempo"></td>
             <td>  
             <div class="custom-control custom-checkbox">
-            <input type="checkbox" class="custom-control-input" id="qrCheck${i}" ${e.qr == 1? 'checked' : ''}>
+            <input type="checkbox" value="${e.qr}" class="custom-control-input" id="qrCheck${i}" ${e.qr == 1 ? 'checked' : ''}>
             <label class="custom-control-label" for="qrCheck${i}"></label>
             </div>
             </td>
             <td>
             <div class="custom-control custom-checkbox">
-            <input type="checkbox" class="custom-control-input" id="nfcCheck${i}" ${e.nfc == 1? 'checked' : ''}>
+            <input type="checkbox" value="${e.nfc}" class="custom-control-input" id="nfcCheck${i}" ${e.nfc == 1 ? 'checked' : ''}>
             <label class="custom-control-label" for="nfcCheck${i}"></label>
             </div>
             </td>
             <td>
             <div class="custom-control custom-checkbox">
-            <input type="checkbox" class="custom-control-input" id="llegueCheck${i}" ${e.llegue == 1? 'checked' : ''}>
+            <input type="checkbox" value="${e.llegue}" class="custom-control-input" id="llegueCheck${i}" ${e.llegue == 1 ? 'checked' : ''}>
             <label class="custom-control-label" for="llegueCheck${i}"></label>
             </div>
             </td>
-            <td>
+            <td style="width:400px">
             <select id="${selectObjetivosId}">
             <option value="${e.id_objetivo}" selected=selected>${e.objetivo}</option>
             </select>
             </td> 
+            <td class="text-center">
+            <button class="btn btn-danger rounded-pill deleteItemModal" onClick="eliminarItemTablaModal(${e.id})">X</button>
+            </td>
             </tr>`);
 
-            objetivosModal(idCliente,selectObjetivosId,e.id_objetivo,puntoControlId, e.puntocontrol_id);
+
+            objetivosModal(idCliente, selectObjetivosId, e.id_objetivo, puntoControlId, e.puntocontrol_id);
             selectPuntosControl(selectObjetivosId, idCliente, puntoControlId, e.puntocontrol_id);
 
 
@@ -157,6 +166,7 @@ function listarItemsRonda(id, nombredeRonda) {
 
 
 //ELIMINAMOS UN ITEM DE LA TABLA ITEMS DE RONDA
+
 $("#tabla-items-ronda").on("click", ".del", function () {
    $(this).parents("tr").remove();
 
@@ -304,23 +314,25 @@ function editarRonda() {
    let nombreRonda = $('#nombreRonda').val();
    let estadoRonda = $('#selectEstadosRonda option:selected').val();
 
-   if (confirm('¿Desea modificar esta ronda?')) {
+   {
       if (nombreRonda.length > 0) {
-         $.ajax({
-            type: "post",
-            url: "./editarronda",
-            data: {
-               idRonda: idRonda,
-               nombreRonda: nombreRonda,
-               estadoRonda: estadoRonda
-            },
-            success: function (data) {
-               alert("Se modifico el control correctamente");
-               $('#modalRonda').modal('toggle');
-               listarRondasCliente();
+         if (confirm('¿Desea modificar esta ronda?')) {
+            $.ajax({
+               type: "post",
+               url: "./editarronda",
+               data: {
+                  idRonda: idRonda,
+                  nombreRonda: nombreRonda,
+                  estadoRonda: estadoRonda
+               },
+               success: function (data) {
+                  alert("Se modifico la ronda correctamente");
+                  $('#modalRonda').modal('toggle');
+                  listarRondasCliente();
 
-            }
-         });
+               }
+            });
+         }
       } else {
          alert("Nombre no puede estar vacío")
       }
@@ -350,59 +362,256 @@ function eliminarRonda(id) {
    }
 }
 
+//LISTAMOS LOS OBJETIVOS DEL MODAL SEGUN EL CLIENTE Y SEGUN ELLOS, LLAMO FUNCION PARA LISTAR LOS PUNTOS DE CONTROL
 function objetivosModal(idClienteRonda, selectObjetivosId, idObjetivo, puntoControlId, idPuntoControl) {
 
 
-      $.ajax({
-         type: "post",
-         url: "objetivosModal",
-         data: {
-            id: idClienteRonda
-         },
-         success: function (data) {
-            let datos = JSON.parse(data);
-            $.map(datos, function (e,i){
-               if(idObjetivo != e.codigo_objetivo){
-                  $("#"+selectObjetivosId+"").append("<option value=" + e.codigo_objetivo + ">" + e.nombre_objetivo + "</option>")
-               }
-               $("#"+selectObjetivosId+"").on("change", function (){
-                    $("#"+puntoControlId+"").empty();
-                  selectPuntosControl(selectObjetivosId, idClienteRonda, puntoControlId,idPuntoControl);
-               })
+   $.ajax({
+      type: "post",
+      url: "objetivosModal",
+      data: {
+         id: idClienteRonda
+      },
+      success: function (data) {
+         let datos = JSON.parse(data);
+         $.map(datos, function (e, i) {
+            if (idObjetivo != e.codigo_objetivo) {
+               $("#" + selectObjetivosId + "").append("<option value=" + e.codigo_objetivo + ">" + e.nombre_objetivo + "</option>")
+
+            }
+
+         })
+            $("#" + selectObjetivosId + "").on("change", function () {
+            $("#" + puntoControlId + "").empty();
+            selectPuntosControl(selectObjetivosId, idClienteRonda, puntoControlId, idPuntoControl);
+         })
+      }
+   });
+}
+
+//LISTAMOS LOS PUNTOS DE CONTROL
+function selectPuntosControl(selectObjetivo, idClienteRonda, SelectpuntoControlId, idPuntoControl) {
+   let objetivosIdModal = $("#" + selectObjetivo + " option:selected ").val();
+
+
+   $.ajax({
+      type: "post",
+      url: "puntoscontrolCliente",
+      data: {
+         objetivoCliente: objetivosIdModal,
+         id_cliente: idClienteRonda
+      },
+      success: function (data) {
+
+         let datos = JSON.parse(data);
+         $.map(datos, function (e, i) {
+            // console.log(e.id == idPuntoControl);
+            if (idPuntoControl !== e.id) {
+               $("#" + SelectpuntoControlId + "").append("<option value=" + e.id + ">" + e.nombre + "</option>")
+            }
+         });
+      }
+   });
+}
+
+
+//CAPTURAMOS LOS DATOS EDITADOS DE LA TABLA DE ITEMS DE RONDA DEL MODAL 
+
+function guardarItemsRonda() {
+
+   var idRondaItems = [];
+   var itemsPuntoControl = [];
+   var itemsOrdenronda = [];
+   var itemstiempo = [];
+   var qr = [];
+   var nfc = [];
+   var llegue = [];
+   var itemsObjetivo = [];
+
+
+
+   $('#tablaModalItemsRonda tbody tr td:nth-child(1)').each(function () {
+      idRondaItems.push($(this).find("input").attr('value'));
+   });
+
+   $('#tablaModalItemsRonda tbody tr td:nth-child(2)').each(function () {
+      itemsPuntoControl.push($("option:selected", this).val());
+   });
+
+   $('#tablaModalItemsRonda tbody tr td:nth-child(3)').each(function () {
+      itemsOrdenronda.push($(this).find("input").val());
+   });
+   $('#tablaModalItemsRonda tbody tr td:nth-child(4)').each(function () {
+      itemstiempo.push($(this).find("input").val());
+
+   });
+   $('#tablaModalItemsRonda tbody tr td:nth-child(5)').each(function () {
+      if ($(this).find("input").is(":checked")) {
+         $(this).find("input").val("1");
+      } else {
+         $(this).find("input").val("0");
+      }
+      qr.push($(this).find("input").val());
+   });
+   $('#tablaModalItemsRonda tbody tr td:nth-child(6)').each(function () {
+      if ($(this).find("input").is(":checked")) {
+         $(this).find("input").val("1");
+      } else {
+         $(this).find("input").val("0");
+      }
+      nfc.push($(this).find("input").val());
+   });
+   $('#tablaModalItemsRonda tbody tr td:nth-child(7)').each(function () {
+      if ($(this).find("input").is(":checked")) {
+         $(this).find("input").val("1");
+      } else {
+         $(this).find("input").val("0");
+      }
+      llegue.push($(this).find("input").val());
+   });
+   $('#tablaModalItemsRonda tbody tr td:nth-child(8)').each(function () {
+      itemsObjetivo.push($("option:selected", this).text());
+   });
+
+   $.ajax({
+      type: 'post',
+      cache: false,
+      url: '../ronda/guardoItemRondaActualizada',
+      data: {
+         "idRondaItems": idRondaItems,
+         "itemsPuntoControl": itemsPuntoControl,
+         "itemsOrdenronda": itemsOrdenronda,
+         "itemstiempo": itemstiempo,
+         "qrCheck": qr,
+         "nfcCheck": nfc,
+         "llegueCheck": llegue,
+         "itemsObjetivo": itemsObjetivo
+      },
+      success: function (data) {
+         if (confirm('¿Desea modificar esta ronda?')) {
+            if (data) {
+               alert("Ronda actualizada exitosamente");
+               $('#listarItemRondaModal').modal('toggle');
+               listarRondasCliente();
+
+            } else {
+               alert("Error al actualizar la ronda");
+            }
+         }
+
+
+      }
+   });
+}
+
+//ELIMINAMOS UN ITEM DE LA TABLA ITEMS DE RONDA
+function eliminarItemTablaModal(idItemRonda) {
+
+   $.ajax({
+      type: 'post',
+      cache: false,
+      url: '../ronda/eliminoItemRondaModal',
+      data: {
+         idItemRonda: idItemRonda
+      },
+      success: function (data) {
+         alert("Item eliminado correctamente");
+      }
+   });
+}
+
+//REMOVEMOS EL ITEM ELIMINADO DE LA TABLA ITEMS DE RONDA
+$("#tablaModalItemsRonda").on("click", ".deleteItemModal", function () {
+   $(this).parents("tr").remove();
+
+});
+
+function agregarItemTablaModal() {
+
+   document.getElementById("tablaModalAgregarItemsRonda").style.display = "inline-block";
+
+   let idCliente = $('#clienteRondas').val();
+
+   $.ajax({
+      type: "post",
+      url: "../ronda/objetivosRondaCliente",
+      data: {
+         id_cliente : idCliente
+      },
+      success: function (data) {
+         let datos = JSON.parse(data);
+         $.map(datos, function (e, i) {
+            //let selectAgregarObjetivosId = 'objetivostableModal' + i;
+               $("#selectAgregarObjetivosId").append("<option value=" + e.codigo_objetivo + ">" + e.nombre_objetivo + "</option>")
+
+         })
+      }
+   });
+
+   $("#tablaModalAgregarItemsRonda tbody").append(`<tr">
+            <td style="display:none"><input value=""></input></td>
+            <td style="width:400px">
+            <select id="selectAgregarPuntosControlId"></td> 
+            <td style="width:15px"><input value="" name = "orden"></td>
+            <td style="width:75px"><input value="" name = "tiempo"></td>
+            <td>  
+            <div class="custom-control custom-checkbox">
+            <input type="checkbox" value="" class="custom-control-input" id="qrCheck">
+            <label class="custom-control-label" for="qrCheck"></label>
+            </div>
+            </td>
+            <td>
+            <div class="custom-control custom-checkbox">
+            <input type="checkbox" value="" class="custom-control-input" id="nfcCheck">
+            <label class="custom-control-label" for="nfcCheck"></label>
+            </div>
+            </td>
+            <td>
+            <div class="custom-control custom-checkbox">
+            <input type="checkbox" value="" class="custom-control-input" id="llegueCheck"}>
+            <label class="custom-control-label" for="llegueCheck"></label>
+            </div>
+            </td>
+            <td style="width:400px">
+            <select id="selectAgregarObjetivosId">
+            <option value="" selected=selected disabled >Seleccione un objetivo</option>
+            </select>
+            </td> 
+            <td style="width:150px">
+            <button class="btn btn-danger rounded-pill deleteItemModal" onClick="">X</button><button class="btn btn-success rounded-pill deleteItemModal ml-2" onClick=""><i style="margin-left:0" class="fa fa-check"></i></button>
+            </td>
+            </tr>`);
+
+            $("#selectAgregarObjetivosId").on("change", function () {
+               $("#selectAgregarPuntosControlId").empty();
+               selectAgregarPuntosControlId(selectAgregarObjetivosId, idCliente);
             })
-
-         }
-      });
 }
 
-function selectPuntosControl(selectObjetivo, idClienteRonda, SelectpuntoControlId, idPuntoControl){
-   let objetivosIdModal = $("#"+selectObjetivo+" option:selected ").val();
+function selectAgregarPuntosControlId(selectAgregarObjetivosId,idCliente) {
 
+   let selectObjetivosId = $("#selectAgregarObjetivosId option:selected ").val();
 
-    $.ajax({
-         type: "post",
-         url: "puntoscontrolCliente",
-         data: {
-            objetivoCliente: objetivosIdModal,
-            id_cliente:idClienteRonda
-         },
-         success: function (data) {
+   console.log(idCliente,selectObjetivosId);
+   $.ajax({
+      type: "post",
+      url: "puntoscontrolCliente",
+      data: {
+         objetivoCliente: selectObjetivosId,
+         id_cliente: idCliente
+      },
+      success: function (data) {
 
-            let datos = JSON.parse(data);
-            $.map(datos, function (e,i) {
-               console.log(e.id == idPuntoControl);
-               if(idPuntoControl !== e.id) {
-                  $("#" + SelectpuntoControlId + "").append("<option value=" + e.id + ">" + e.nombre + "</option>")
-               }
-            });
-         }
-      });
-
+         let datos = JSON.parse(data);
+         $.map(datos, function (e, i) {
+               $("#selectAgregarPuntosControlId").append("<option value=" + e.id + ">" + e.nombre + "</option>")
+         });
+      }
+   });
 }
 
 
-
-////////////////////// COMIENZA DOCUMENT READY////////////////////
+//////////////////////************* COMIENZA DOCUMENT READY ***************///////////////////////////
 
 
 
@@ -684,7 +893,6 @@ $(document).ready(function () {
       });
       $("#objetivoClienteRonda option").not(':first').remove();
    });
-
 
 
 

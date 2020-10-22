@@ -118,8 +118,8 @@
             </div>
 
             
-            <div class="modal fade bd-example-modal-lg" id="listarItemRondaModal" tabindex="-1" role="dialog" aria-hidden="true">
-                    <div class="modal-dialog modal-lg" role="document">
+            <div class="modal fade bd-example-modal-xl" id="listarItemRondaModal" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-xl" role="document">
                         <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title-items" id="modalRondaTitle"></h5>
@@ -131,23 +131,44 @@
                             <table id="tablaModalItemsRonda" class="table table-bordered">
                                 <thead class="thead-dark">
                                     <tr>
-                                        <th class="p-2" scope="col">Punto de Control</th>
-                                        <th class="p-2" scope="col">Orden</th>
-                                        <th class="p-2" scope="col">tiempo</th>
-                                        <th class="p-2" scope="col">qr</th>
-                                        <th class="p-2" scope="col">alive</th>
-                                        <th class="p-2" scope="col">llegue</th>
-                                        <th class="p-2" scope="col">Objetivo</th>
+                                        <th class="p-3" scope="col">Punto de Control</th>
+                                        <th class="p-3" scope="col">Orden</th>
+                                        <th class="p-3" scope="col">Tiempo</th>
+                                        <th class="p-3" scope="col">QR</th>
+                                        <th class="p-3" scope="col">NFC</th>
+                                        <th class="p-3" scope="col">Llegue</th>
+                                        <th class="p-3" scope="col">Objetivo</th>
+                                        <th class="" scope="col"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
 
                                 </tbody>
                             </table>
+
+                            <table id="tablaModalAgregarItemsRonda" class="table table-bordered" style="display:none">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th class="p-3" scope="col">Punto de Control</th>
+                                        <th class="p-3" scope="col">Orden</th>
+                                        <th class="p-3" scope="col">Tiempo</th>
+                                        <th class="p-3" scope="col">QR</th>
+                                        <th class="p-3" scope="col">NFC</th>
+                                        <th class="p-3" scope="col">Llegue</th>
+                                        <th class="p-3" scope="col">Objetivo</th>
+                                        <th class="" scope="col"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+
                         </div>
-                        <div class="modal-footer">
+                        <div class="modal-footer d-flex">
+                            <button type="button" class="btn btn-success rounded-pill mr-auto " onClick="agregarItemTablaModal()">Agregar Item +</button>
                             <button type="button" class="btn btn-danger rounded-pill" data-dismiss="modal">Cancelar</button>
-                            <button type="button" class="btn btn-primary rounded-pill" onClick="editarRonda()">Modificar</button>
+                            <button type="button" class="btn btn-primary rounded-pill" onClick="guardarItemsRonda()">Actualizar</button>
                         </div>
                         </div>
                     </div>

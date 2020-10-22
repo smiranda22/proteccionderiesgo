@@ -2,6 +2,31 @@
 
 class RondaManager{
 
+        public function updateItemsRondasModificada($data){
+            foreach($data['idRondaItems'] as $fila){
+                $i[] = $fila; 
+            }
+
+            $idRondaItems = array_combine($i, $data['idRondaItems']);
+            $itemsOrdenronda = array_combine($i, $data['itemsOrdenronda']);
+            $itemstiempo = array_combine($i, $data['itemstiempo']);
+            $qr = array_combine($i, $data['qrCheck']);
+            $nfc = array_combine($i, $data['nfcCheck']);
+            $llegue = array_combine($i, $data['llegueCheck']); 
+            
+            foreach ($idRondaItems as $fila) { 
+                $query = "UPDATE item_ronda 
+                          SET orden = '".$itemsOrdenronda[$fila]."',
+                          tiempo = '".$itemstiempo[$fila]."',  
+                          qr = '".$qr[$fila]."', 
+                          nfc = '".$nfc[$fila]."', 
+                          llegue = '".$llegue[$fila]."' 
+                          WHERE id = '".$fila."'";
+                Db:: update($query);
+            }    
+        }
+
+
         public function cargaRonda($data){
             
             $id_cliente = $data['cliente'];
@@ -13,14 +38,14 @@ class RondaManager{
             $id_ronda = Db::insert($query_ronda);
 
             foreach($data['itemsronda'] as $fila){
-            $i[]=$fila;
+            $i[] = $fila;
             }
-            $itemsronda= array_combine($i, $data['itemsronda']);
-            $itemstiempo= array_combine($i, $data['itemstiempo']);
-            $itemscontrol= array_combine($i, $data['itemscontrol']);
-            $qr= array_combine($i, $data['qrCheck']);
-            $nfc= array_combine($i, $data['nfcCheck']);
-            $llegue= array_combine($i, $data['llegueCheck']);
+            $itemsronda = array_combine($i, $data['itemsronda']);
+            $itemstiempo = array_combine($i, $data['itemstiempo']);
+            $itemscontrol = array_combine($i, $data['itemscontrol']);
+            $qr = array_combine($i, $data['qrCheck']);
+            $nfc = array_combine($i, $data['nfcCheck']);
+            $llegue = array_combine($i, $data['llegueCheck']);
 
             foreach ($itemsronda as $fila =>$valor) { 
                 $query = "INSERT INTO item_ronda (id_ronda, id_puntocontrol, orden,tiempo,qr,nfc,llegue) 
@@ -31,32 +56,32 @@ class RondaManager{
         }
 
         public function getObjetivos(){
-            $query="SELECT * FROM objetivos";
+            $query = "SELECT * FROM objetivos";
                                         
             return Db::queryAll($query);
         }
 
         public function getClientes(){
-            $query="SELECT * FROM clientes ORDER BY nombre ASC";
+            $query = "SELECT * FROM clientes ORDER BY nombre ASC";
 
             return Db::queryAll($query);
         }
 
         public function getPuntosControlCliente($idCliente,$objetivoCliente){
-            $query="SELECT * FROM puntoscontrol WHERE id_cliente = $idCliente AND id_objetivo = $objetivoCliente";
+            $query = "SELECT * FROM puntoscontrol WHERE id_cliente = $idCliente AND id_objetivo = $objetivoCliente";
                                         
             return Db::queryAll($query);
         }
         
         
         public function eliminarRonda($idcambiarEstado){
-            $query= "UPDATE puntoscontrol SET estado = '0' WHERE id = :id";
+            $query = "UPDATE puntoscontrol SET estado = '0' WHERE id = :id";
 
             return Db::update($query, $idcambiarEstado);
        }
 
        public function modificarRonda($arrayModificar){
-           $query= "UPDATE puntoscontrol SET nombre = :nombre, objetivo = :objetivo WHERE id = :id";
+           $query = "UPDATE puntoscontrol SET nombre = :nombre, objetivo = :objetivo WHERE id = :id";
 
            return Db::update($query, $arrayModificar);
         }
@@ -81,14 +106,15 @@ class RondaManager{
 
        public function listarItemsRonda($idRonda){
            $query = "SELECT 
-puntoscontrol.id AS puntocontrol_id,
-puntoscontrol.nombre,
-item_ronda.orden, 
-item_ronda.tiempo, 
-item_ronda.qr, item_ronda.nfc, item_ronda.llegue, puntoscontrol.objetivo, puntoscontrol.id_objetivo
-FROM item_ronda
-INNER JOIN puntoscontrol ON item_ronda.id_puntocontrol = puntoscontrol.id
-WHERE id_ronda  = '".$idRonda."'";
+                    item_ronda.id,
+                    puntoscontrol.id AS puntocontrol_id,
+                    puntoscontrol.nombre,
+                    item_ronda.orden, 
+                    item_ronda.tiempo, 
+                    item_ronda.qr, item_ronda.nfc, item_ronda.llegue, puntoscontrol.objetivo, puntoscontrol.id_objetivo
+                FROM item_ronda
+                    INNER JOIN puntoscontrol ON item_ronda.id_puntocontrol = puntoscontrol.id
+                WHERE id_ronda = '".$idRonda."' AND item_ronda.estado = '1'";
 
             return Db::queryAll($query);
        }
@@ -100,8 +126,11 @@ WHERE id_ronda  = '".$idRonda."'";
         WHERE cli.cliente = $idCliente";
 
         return Db::queryAll($query);
-
     }  
+
+        public function eliminoItemRondaModal($idItemRonda){
+            $query = " UPDATE item_ronda SET estado = 0 WHERE id = '".$idItemRonda."'";
+
+            return Db::update($query);
+        }
 }
-    
-?>
