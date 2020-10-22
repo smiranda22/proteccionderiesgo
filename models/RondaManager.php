@@ -106,6 +106,7 @@ class RondaManager{
 
        public function listarItemsRonda($idRonda){
            $query = "SELECT 
+                    item_ronda.id_ronda,
                     item_ronda.id,
                     puntoscontrol.id AS puntocontrol_id,
                     puntoscontrol.nombre,
