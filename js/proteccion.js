@@ -124,7 +124,11 @@ function listarItemsRonda(id, nombredeRonda) {
             
             $("#tablaModalItemsRonda tbody").append(`<tr">
             <td style="display:none"><input value="${e.id}"></input></td>
-            <td style="width:400px"><select id="${puntoControlId}"><option selected=selected value="${e.puntocontrol_id}">${e.nombre}</option></select></td> 
+            <td style="width:400px">
+            <select id="${selectObjetivosId}">
+            <option value="${e.id_objetivo}" selected=selected>${e.objetivo}</option>
+            </select>
+            </td> 
             <td style="width:15px"><input value="${e.orden}" name = "orden"></td>
             <td style="width:75px"><input value="${e.tiempo}" name = "tiempo"></td>
             <td>  
@@ -145,11 +149,7 @@ function listarItemsRonda(id, nombredeRonda) {
             <label class="custom-control-label" for="llegueCheck${i}"></label>
             </div>
             </td>
-            <td style="width:400px">
-            <select id="${selectObjetivosId}">
-            <option value="${e.id_objetivo}" selected=selected>${e.objetivo}</option>
-            </select>
-            </td> 
+            <td style="width:400px"><select id="${puntoControlId}"><option selected=selected value="${e.puntocontrol_id}">${e.nombre}</option></select></td> 
             <td class="text-center">
             <button class="btn btn-danger rounded-pill deleteItemModal" onClick="eliminarItemTablaModal(${e.id})">X</button>
             </td>
@@ -425,8 +425,8 @@ function guardarItemsRonda() {
       idRondaItems.push($(this).find("input").attr('value'));
    });
    
-   $('#tablaModalItemsRonda tbody tr td:nth-child(2)').each(function () {
-      itemsPuntoControl.push($("option:selected", this).val());
+   $('#tablaModalItemsRonda tbody tr td:nth-child(8)').each(function () {
+      console.log($("option:selected", this).val());
    });
    
    $('#tablaModalItemsRonda tbody tr td:nth-child(3)').each(function () {
@@ -460,11 +460,8 @@ function guardarItemsRonda() {
       }
       llegue.push($(this).find("input").val());
    });
-   $('#tablaModalItemsRonda tbody tr td:nth-child(8)').each(function () {
-      itemsObjetivo.push($("option:selected", this).text());
-   });
-   
-   $.ajax({
+
+  $.ajax({
       type: 'post',
       cache: false,
       url: '../ronda/guardoItemRondaActualizada',
@@ -517,7 +514,15 @@ $("#tablaModalItemsRonda").on("click", ".deleteItemModal", function () {
    
 });
 
+$("#tablaModalAgregarItemsRonda").on("click", ".cancelNewItemModal", function () {
+   $(this).parents("tr").remove();
+   document.getElementById("newItemTable").style.display = "none";
+   
+});
+
 function agregarItemTablaModal() {
+
+   $('#newItemModalButton').attr("disabled", true);
    
    document.getElementById("newItemTable").style.display = "inline-block";
    
@@ -540,7 +545,7 @@ function agregarItemTablaModal() {
 
    
    
-   $("#tablaModalAgregarItemsRonda tbody").append(`
+   $("#tablaModalAgregarItemsRonda tbody").html(`
       <tr>
       <td style="width:400px" load="showOptionsNewItems();">
          <select id="selectAgregarObjetivosId" onChange="">
@@ -572,7 +577,7 @@ function agregarItemTablaModal() {
          </div>
       </td>
       <td style="width:150px" class="newItemsOptions">
-         <button class="btn btn-danger rounded-pill deleteItemModal" onClick="">X</button><button class="btn btn-success rounded-pill deleteItemModal ml-2" onClick="newItemsRonda(this)"><i style="margin-left:0" class="fa fa-check"></i></button>
+         <button class="btn btn-danger rounded-pill cancelNewItemModal" onClick="">X</button><button class="btn btn-success rounded-pill ml-2" onClick="newItemsRonda(this)"><i style="margin-left:0" class="fa fa-check"></i></button>
       </td>
       </tr>
   `);
@@ -588,7 +593,6 @@ function agregarItemTablaModal() {
 
 function showOptionsNewItems(value = null){
    if(value){
-      console.log("dlñaskdñlaskd")
       $(".newItemsOptions").show();
    } else {
       $(".newItemsOptions").hide();
@@ -618,6 +622,11 @@ function selectAgregarPuntosControlId(idCliente) {
 }
 
 function newItemsRonda() {
+
+
+   let nombreRonda = $("#modalModificacionRondaTitle").text();
+
+   let idRondaNewItem =  $("#idRondaModal").val();
    
    let llegueCheckNewItem = $("#llegueCheckNewItem").prop('checked') ? 1 : 0;
    let qrCheckNewItem = $("#qrCheckNewItem").prop('checked') ? 1 : 0;
@@ -633,32 +642,32 @@ function newItemsRonda() {
    // validacion orden 
    let validacionOrden = $("#ordenNewItem").val().length === 0 ? false : true;
 
-   //validacion de tiempo 
+   // validacion de tiempo 
    let validacionTiempo = $("#tiempoNewItem").val().length === 0 ? false : true;
 
    if (validarCheckobox) {
       if(validacionOrden&&validacionTiempo){
-       $.ajax({
+      $.ajax({
             type: 'post',
             cache: false,
             url: '../ronda/newItemRondaActualizada',
             data: {
-               "idRondaItems": idRondaItems,
-               "itemsPuntoControl": itemsPuntoControl,
-               "itemsOrdenronda": itemsOrdenronda,
-               "itemstiempo": itemstiempo,
-               "qrCheck": qr,
-               "nfcCheck": nfc,
-               "llegueCheck": llegue,
-               "itemsObjetivo": itemsObjetivo
+               idRondaNewItem : idRondaNewItem,
+               selectNewPuntosControlId : selectNewPuntosControlId,
+               ordenNewItem : ordenNewItem,
+               tiempoNewItem : tiempoNewItem,
+               qrCheckNewItem : qrCheckNewItem, 
+               nfcCheckNewItem : nfcCheckNewItem,
+               llegueCheckNewItem : llegueCheckNewItem
             },
             success: function (data) {
                if (confirm('¿Desea agregar este item a la ronda?')) {
                   if (data) {
                      alert("Item agregado exitosamente");
-                     $('#listarItemRondaModal').modal('toggle');
-                     listarRondasCliente();
-                     
+                     $("#tablaModalAgregarItemsRonda tbody").empty();
+                     document.getElementById("newItemTable").style.display = "none";
+                     $('#newItemModalButton').attr("disabled", false);
+                     $('#listarItemRondaModal').modal('toggle');               
                   } else {
                      alert("Error al generar el item");
                   }

@@ -46,6 +46,11 @@ class RondaController extends Controller
                 $this->eliminoItemRondaModal($_POST);
                 exit();
                 break;
+            case 'newItemRondaActualizada':
+                $this->newItemRondaActualizada($_POST);
+                exit();
+                break;
+
 
             case 'nuevaronda':
                 $this->view = 'ronda/nuevaronda';
@@ -194,6 +199,24 @@ class RondaController extends Controller
         $eliminaItem = $deleteItemRonda -> eliminoItemRondaModal($idItemRonda);
 
         echo json_encode($eliminaItem);
+
+    }
+
+    public function newItemRondaActualizada($data){
+        
+        $idRondaNewItem = $data['idRondaNewItem'];
+        $selectNewPuntosControlId = $data['selectNewPuntosControlId'];
+        $ordenNewItem = $data['ordenNewItem'];
+        $tiempoNewItem = $data['tiempoNewItem'];
+        $qrCheckNewItem = $data['qrCheckNewItem'];
+        $nfcCheckNewItem = $data['nfcCheckNewItem'];
+        $llegueCheckNewItem = $data['llegueCheckNewItem'];
+
+        $newItemRonda = new RondaManager;
+
+        $nuevoItemRonda = $newItemRonda -> newItemRondaActualizada($idRondaNewItem,$selectNewPuntosControlId,$ordenNewItem,$tiempoNewItem,$qrCheckNewItem,$nfcCheckNewItem,$llegueCheckNewItem);
+
+        echo json_encode($nuevoItemRonda);
 
     }
 }
