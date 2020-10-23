@@ -50,6 +50,11 @@ class RondaController extends Controller
                 $this->newItemRondaActualizada($_POST);
                 exit();
                 break;
+            case 'objetivosClienteAdminRonda':
+                $this->objetivosClienteAdminRonda($_POST);
+                exit();
+                break;
+
 
 
             case 'nuevaronda':
@@ -111,10 +116,13 @@ class RondaController extends Controller
     {
 
         $idClienteRonda = $data['id'];
+        $idObjetivoCliente = $data['objetivo'];
+        $filtro = $data['filtro'];
+        $orden = $data['orden'];
 
         $ronda = new RondaManager;
 
-        $rondasCliente = $ronda->getRondas($idClienteRonda);
+        $rondasCliente = $ronda->getRondas($idClienteRonda,$idObjetivoCliente,$filtro,$orden);
 
         echo json_encode($rondasCliente);
     }
@@ -196,14 +204,14 @@ class RondaController extends Controller
 
         $deleteItemRonda = new RondaManager;
 
-        $eliminaItem = $deleteItemRonda -> eliminoItemRondaModal($idItemRonda);
+        $eliminaItem = $deleteItemRonda->eliminoItemRondaModal($idItemRonda);
 
         echo json_encode($eliminaItem);
-
     }
 
-    public function newItemRondaActualizada($data){
-        
+    public function newItemRondaActualizada($data)
+    {
+
         $idRondaNewItem = $data['idRondaNewItem'];
         $selectNewPuntosControlId = $data['selectNewPuntosControlId'];
         $ordenNewItem = $data['ordenNewItem'];
@@ -214,9 +222,20 @@ class RondaController extends Controller
 
         $newItemRonda = new RondaManager;
 
-        $nuevoItemRonda = $newItemRonda -> newItemRondaActualizada($idRondaNewItem,$selectNewPuntosControlId,$ordenNewItem,$tiempoNewItem,$qrCheckNewItem,$nfcCheckNewItem,$llegueCheckNewItem);
+        $nuevoItemRonda = $newItemRonda->newItemRondaActualizada($idRondaNewItem, $selectNewPuntosControlId, $ordenNewItem, $tiempoNewItem, $qrCheckNewItem, $nfcCheckNewItem, $llegueCheckNewItem);
 
         echo json_encode($nuevoItemRonda);
+    }
+
+    public function objetivosClienteAdminRonda($data)
+    {
+        $idObjetivoAdminRonda = $data['idClienteRonda'];
+
+        $objetivosAdminRonda = new RondaManager;
+
+        $rondaAdminObjetivos = $objetivosAdminRonda -> objetivosClienteAdminRonda($idObjetivoAdminRonda);
+
+        echo json_encode($rondaAdminObjetivos);
 
     }
 }

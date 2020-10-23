@@ -94,9 +94,14 @@ class RondaManager
         return Db::update($query, $arrayModificar);
     }
 
-    public function getRondas($id)
+    public function getRondas($id,$objetivo,$filtro,$orden)
     {
-        $query = "SELECT * FROM rondas WHERE id_cliente = $id AND activo = 1";
+        $query = "select r.*, pc.id_objetivo
+                    from puntoscontrol pc
+                    inner join item_ronda ir ON ir.id_puntocontrol= pc.id
+                    inner join rondas r ON r.id = ir.id_ronda
+                    where pc.id_cliente = $id AND pc.id_objetivo = $objetivo
+                    group by r.id, r.nombre, r.id_cliente, r.fecha, r.estado, r.activo,pc.id_objetivo ORDER BY $filtro $orden";
 
         return Db::queryAll($query);
     }
@@ -149,11 +154,21 @@ class RondaManager
         return Db::update($query);
     }
 
-    public function newItemRondaActualizada($idRondaNewItem,$selectNewPuntosControlId,$ordenNewItem,$tiempoNewItem,$qrCheckNewItem,$nfcCheckNewItem,$llegueCheckNewItem)
+    public function newItemRondaActualizada($idRondaNewItem, $selectNewPuntosControlId, $ordenNewItem, $tiempoNewItem, $qrCheckNewItem, $nfcCheckNewItem, $llegueCheckNewItem)
     {
         $query = "INSERT INTO item_ronda (id_ronda,id_puntocontrol,orden,tiempo,qr,nfc,llegue) 
                 VALUES ('" . $idRondaNewItem . "','" . $selectNewPuntosControlId . "','" . $ordenNewItem . "','" . $tiempoNewItem . "','" . $qrCheckNewItem . "','" . $nfcCheckNewItem . "','" . $llegueCheckNewItem . "')";
 
         return Db::insert($query);
+    }
+
+    public function objetivosClienteAdminRonda($idClienteAdminRonda)
+    {
+        $query = "SELECT LTRIM(RTRIM(obj.nombre)) AS 'nombre_objetivo', obj.codigo AS 'codigo_objetivo' FROM dbo.clientes_por_objetivo AS cli
+        LEFT JOIN objetivos obj ON obj.codigo = cli.objetivo
+        INNER JOIN clientes c ON c.codigo = cli.cliente
+        WHERE cli.cliente = '" . $idClienteAdminRonda . "'";
+
+        return Db::queryAll($query);
     }
 }

@@ -51,20 +51,36 @@ function listarPuntosControlCliente(id = null, objetivo = null) {
 
 //LISTAMOS LAS RONDAS SEGUN EL CLIENTE SELECCIONADO
 
-function listarRondasCliente(id = null) {
+function listarRondasCliente(id = null, objetivo = null, filtro = null, orden) {
    
+   let ordenTabla = orden;
+
+   if (filtro == null) {
+      var filtroTabla = "id_objetivo"
+   } else {
+      var filtroTabla = filtro;
+   }
    
    if (id == null) {
       var idCliente = $('#clienteRondas').val();
    } else {
       var idCliente = id;
    }
+
+   if (objetivo == null) {
+      var idObjetivo = $('#clienteRondas').val();
+   } else {
+      var idObjetivo = objetivo;
+   }
    
    $.ajax({
       type: "post",
       url: "rondacliente",
       data: {
-         id: idCliente
+         id: idCliente,
+         objetivo: idObjetivo,
+         filtro: filtroTabla,
+         orden: ordenTabla
       },
       success: function (data) {
          
@@ -158,8 +174,7 @@ function listarItemsRonda(id, nombredeRonda) {
             
             objetivosModal(idCliente, selectObjetivosId, e.id_objetivo, puntoControlId, e.puntocontrol_id);
             selectPuntosControl(selectObjetivosId, idCliente, puntoControlId, e.puntocontrol_id);
-            
-            
+              
          });
          
       }
@@ -231,6 +246,10 @@ function guardarRonda() {
    itemsronda = ordenItemRonda;
    itemstiempo = tiempoItemRonda;
    itemscontrol = itemscontrol;
+
+   
+   $('#clienteNuevaRonda').attr("disabled", false);
+   $('#objetivoClienteRonda').attr("disabled", false);
    
    $.ajax({
       type: 'post',
@@ -249,7 +268,7 @@ function guardarRonda() {
       success: function (data) {
          if (data) {
             alert("Ronda cargada exitosamente");
-            location.reload();
+            location.href = "rondas";
             
          } else {
             alert("Error al generar la ronda");
@@ -885,6 +904,10 @@ $(document).ready(function () {
       let puntoControl = $('#puntoControlCliente option:selected').text();
       let idPuntoControl = $('#puntoControlCliente').val();
       let tiempoItemRonda = $('#tiempoItemRonda').val();
+
+      $('#clienteNuevaRonda').attr("disabled", true);
+      $('#objetivoClienteRonda').attr("disabled", true);
+
       
       if (document.getElementById('qrCheck').checked) {
          var qrCheck = $('#qrCheck').val();
@@ -938,7 +961,23 @@ $(document).ready(function () {
       
       let idClienteRonda = $('#clienteRondas').val();
       
-      listarRondasCliente(idClienteRonda);
+      $("#tabla-rondas-cliente tbody").empty();
+
+      $.ajax({
+         type: 'post',
+         cache: false,
+         dataType: "json",
+         url: './objetivosClienteAdminRonda',
+         data: {
+            idClienteRonda: idClienteRonda,
+         },
+         success: function (data) {
+            for (let i = 0; i < data.length; i++) {
+               $("#objetivosClienteAdminRonda").append("<option value=" + data[i].codigo_objetivo + ">" + data[i].nombre_objetivo + "</option>")  
+            }
+         }
+      });
+      $("#objetivosClienteAdminRonda option").not(':first').remove();
       
    });
    
@@ -965,7 +1004,103 @@ $(document).ready(function () {
       });
       $("#objetivoClienteRonda option").not(':first').remove();
    });
-   
-   
-   
+
+
+    //CARGAMOS EL SELECT DE PUNTOS DE CONTROL SEGUN EL CLIENTE SELECCIONADO
+    $('.objetivosClienteAdminRonda').change(function () {
+      
+      let filtro = null;
+      let idClienteAdminRonda = $('#clienteNuevaRonda').val();
+      let idObjetivoAdminRonda = $('#objetivosClienteAdminRonda').val();
+
+      let orden = "ASC";
+
+      
+      listarRondasCliente(idClienteAdminRonda,idObjetivoAdminRonda,filtro,orden);
+
+   });
+
+
+   // Filtramos las rondas segun el nombre
+
+   $('.botonFiltroNombre').on('click', function () {
+
+      let idClienteAdminRonda = $('#clienteNuevaRonda').val();
+      let idObjetivoAdminRonda = $('#objetivosClienteAdminRonda').val();
+
+
+
+      let ordenNombre = $('#spanNombre').attr('value');
+
+      if (ordenNombre == "ASC") {
+         ordenNombre == $("#spanNombre").attr("value","DESC"); 
+      } else {
+         if (ordenNombre == "DESC") {
+            ordenNombre == $("#spanNombre").attr("value","ASC"); 
+         }
+      }
+      
+      let filtroNombre = $('#botonFiltroNombre').attr("value");
+
+      $("#tabla-rondas-cliente tbody").empty();
+
+      listarRondasCliente(idClienteAdminRonda,idObjetivoAdminRonda,filtroNombre,ordenNombre);
+
+   });
+
+   // Filtramos las rondas segun la fecha
+
+   $('.botonFiltroFecha').on('click', function () {
+
+      let idClienteAdminRonda = $('#clienteNuevaRonda').val();
+      let idObjetivoAdminRonda = $('#objetivosClienteAdminRonda').val();
+
+
+      let ordenFecha = $('#spanFecha').attr('value');
+
+      if (ordenFecha == "ASC") {
+         ordenFecha == $("#spanFecha").attr("value","DESC"); 
+      } else {
+         if (ordenFecha == "DESC") {
+            ordenFecha == $("#spanFecha").attr("value","ASC"); 
+         }
+      }
+
+      let filtroFecha = $('#botonFiltroFecha').attr("value");
+
+      $("#tabla-rondas-cliente tbody").empty();
+
+      listarRondasCliente(idClienteAdminRonda,idObjetivoAdminRonda,filtroFecha,ordenFecha);
+
+   });
+
+   // Filtramos las rondas segun la fecha
+
+   $('.botonFiltroEstado').on('click', function () {
+
+      let idClienteAdminRonda = $('#clienteNuevaRonda').val();
+      let idObjetivoAdminRonda = $('#objetivosClienteAdminRonda').val();
+
+      let ordenEstado = $('#spanEstado').attr('value');
+
+      if (ordenEstado == "ASC") {
+         ordenEstado == $("#spanEstado").attr("value","DESC"); 
+      } else {
+         if (ordenEstado == "DESC") {
+            ordenEstado == $("#spanEstado").attr("value","ASC"); 
+         }
+      }
+
+      console.log(ordenEstado);
+      
+      let filtroEstado = $('#botonFiltroEstado').attr('value');
+
+
+      $("#tabla-rondas-cliente tbody").empty();
+
+      listarRondasCliente(idClienteAdminRonda,idObjetivoAdminRonda,filtroEstado,ordenEstado);
+
+   });
+
+
 });   

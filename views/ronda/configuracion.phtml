@@ -12,7 +12,7 @@
                 <form class="form-inline" method="POST">
                     <div class="form-group mx-sm-3 ">
                         <label class="mb-2">Clientes:</label>
-                            <select class="form-control ml-4 ClienteRondas" id="clienteRondas" name="cliente">
+                            <select class="form-control ml-3 ClienteRondas" id="clienteRondas" name="cliente">
                             <option value="" selected="true"  disabled="disabled" required>Seleccione un cliente</option>
                                 <?php
                                 
@@ -21,16 +21,21 @@
                                     } 
                                 ?>
                             </select>
+                            <label class="mb-2 ml-2">Objetivos:</label>
+                            <select class="form-control ml-3 objetivosClienteAdminRonda" id="objetivosClienteAdminRonda" name="objetivos">
+                            <option value="" selected="true"  disabled="disabled" required>Seleccione un objetivo</option>
+                            </select>
                             <a href="../ronda/nuevaronda" type="button" id="agregarRonda" class="btn btn-info mb-4 ml-4 rounded-pill agregarRonda">Agregar Ronda</a>
                     </div>
+                    
                 </form>
                <div class="container">
                 <table class="table" id="tabla-rondas-cliente">
                         <thead class="thead-dark">
-                            <tr>
-                                <th scope="col">Nombre Ronda</th>
-                                <th scope="col">Fecha Creacion</th>
-                                <th scope="col">Estado</th>
+                            <tr> 
+                                <th scope="col">Nombre Ronda<span id="spanNombre" value="ASC" class="ml-1" type="button"><i id="botonFiltroNombre" value="nombre" class="fa fa-sort botonFiltroNombre"></i></span></th>
+                                <th scope="col">Fecha Creacion<span id="spanFecha" value="ASC" class="ml-1" type="button"><i id="botonFiltroFecha" value="fecha" class="fa fa-sort botonFiltroFecha"></i></span></th>
+                                <th scope="col">Estado<span id="spanEstado" value="ASC" class="ml-1" type="button"><i id="botonFiltroEstado" value="estado" class="fa fa-sort botonFiltroEstado"></i></span></th>
                                 <th class="text-center" scope="col"></th>
                                 <th class="text-center" scope="col"></th>
                             </tr>
