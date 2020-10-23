@@ -26,21 +26,11 @@ class LoginController extends Controller
    $user=$data['usuario'];
    $pass=$data['pass'];
 
-   $new= new LoginManager;
+   $new = new LoginManager;
    
-   $info=$new->getUsuario($user,$pass);
-  
-      if(!$info){
-        $resul=array("usuario"=>"false");
-      }else{
-        $_SESSION['data_user']=array(
-                    "codigo" => $info['codigo'],
-                    "nombre" => $info['nombre'],
-                    "nombre_completo" => $info['nombre_completo']
-                    );
-       $resul=array("usuario"=>"true");             
-      }
-      echo json_encode($resul);  
+   $info = $new->getUsuario($user,$pass);
+
+    echo $info;  
    
   }  
   

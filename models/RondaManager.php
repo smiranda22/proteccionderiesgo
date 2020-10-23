@@ -74,7 +74,7 @@ class RondaManager
 
     public function getPuntosControlCliente($idCliente, $objetivoCliente)
     {
-        $query = "SELECT * FROM puntoscontrol WHERE id_cliente = $idCliente AND id_objetivo = $objetivoCliente";
+        $query = "SELECT * FROM puntoscontrol WHERE id_cliente = $idCliente AND id_objetivo = $objetivoCliente AND estado = '1' ";
 
         return Db::queryAll($query);
     }

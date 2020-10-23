@@ -33,9 +33,9 @@
                 <table class="table" id="tabla-rondas-cliente">
                         <thead class="thead-dark">
                             <tr> 
-                                <th scope="col">Nombre Ronda<span id="spanNombre" value="ASC" class="ml-1" type="button"><i id="botonFiltroNombre" value="nombre" class="fa fa-sort botonFiltroNombre"></i></span></th>
-                                <th scope="col">Fecha Creacion<span id="spanFecha" value="ASC" class="ml-1" type="button"><i id="botonFiltroFecha" value="fecha" class="fa fa-sort botonFiltroFecha"></i></span></th>
-                                <th scope="col">Estado<span id="spanEstado" value="ASC" class="ml-1" type="button"><i id="botonFiltroEstado" value="estado" class="fa fa-sort botonFiltroEstado"></i></span></th>
+                                <th scope="col">Nombre Ronda<span id="spanNombre" value="DESC" class="ml-1" type="button"><i id="botonFiltroNombre" value="nombre" class="fa fa-sort botonFiltroNombre"></i></span></th>
+                                <th scope="col">Fecha Creacion<span id="spanFecha" value="DESC" class="ml-1" type="button"><i id="botonFiltroFecha" value="fecha" class="fa fa-sort botonFiltroFecha"></i></span></th>
+                                <th scope="col">Estado<span id="spanEstado" value="DESC" class="ml-1" type="button"><i id="botonFiltroEstado" value="estado" class="fa fa-sort botonFiltroEstado"></i></span></th>
                                 <th class="text-center" scope="col"></th>
                                 <th class="text-center" scope="col"></th>
                             </tr>
@@ -175,7 +175,7 @@
                         </div>
                         <div class="modal-footer d-flex">
                             <button id="newItemModalButton" type="button" class="btn btn-success rounded-pill mr-auto" onClick="agregarItemTablaModal()">Agregar Item +</button>
-                            <button type="button" class="btn btn-danger rounded-pill" data-dismiss="modal">Cancelar</button>
+                            <button type="button" data-dismiss="modal" id="cancelModal" class="btn btn-danger rounded-pill">Cancelar</button>
                             <button type="button" class="btn btn-primary rounded-pill" onClick="guardarItemsRonda()">Actualizar</button>
                         </div>
                         </div>

@@ -4,9 +4,9 @@ class LoginManager{
 
 
     public function getUsuario($usuario, $password){
-        $query="SELECT * FROM usuarios WHERE nombre='".$usuario."' AND password='". $password ."'";
+        $query="SELECT count(*) FROM usuarios WHERE nombre='".$usuario."' AND password='". $password ."'";
                                     
-        return Db::queryOne($query);
+        return Db::querySingle($query);
         
         }
     

@@ -1,88 +1,97 @@
 <?php
 class PuntocontrolController extends Controller
 {
-	public function process($params){
+    public function process($params)
+    {
         switch ($params[0]) {
             case 'cargacontrol':
-                $this->cargaControl($_POST);exit();
+                $this->cargaControl($_POST);
+                exit();
                 break;
             case 'eliminacontrol':
-                $this->eliminarControl($_POST);exit();
-                break; 
+                $this->eliminarControl($_POST);
+                exit();
+                break;
             case 'actualizacontrol':
-                $this->actualizaControl($_POST);exit(); 
+                $this->actualizaControl($_POST);
+                exit();
             case 'listarobjetivo':
-                $this->listarObjetivos($_POST);exit();    
-                break;  
+                $this->listarObjetivos($_POST);
+                exit();
+                break;
             case 'tablacontrolCliente':
-                $this->tablaControlCliente($_POST);exit();    
-                break;          
+                $this->tablaControlCliente($_POST);
+                exit();
+                break;
+            case 'controlset':
+                $this->controlset($_POST);
+                exit();
+                break;
             default:
-        }  
-	   
+        }
+
         $this->data['title'] = "";
-		$this->data['content'] = "";
-        
+        $this->data['content'] = "";
+
         //Cargo la ruta de la pagina
         $this->view = 'puntocontrol/puntocontrol';
 
 
-       /* if ($_SESSION['idCliente']){
+        /* if ($_SESSION['idCliente']){
             $idCliente = $_SESSION['idCliente'];
             $this->listarObjetivos($idCliente);
         }*/
-            //Obtengo los clientes para el option de Clientes
-            $clientes = $this->getClientes();
+        //Obtengo los clientes para el option de Clientes
+        $clientes = $this->getClientes();
 
-            $this->data['cliente'] = $clientes;
-
-
+        $this->data['cliente'] = $clientes;
     }
 
-/***** ----------EMPIEZAN LAS FUNCIONES---------- *****/
+    /***** ----------EMPIEZAN LAS FUNCIONES---------- *****/
 
     //OBTENGO LOS CLIENTES
-    public function getClientes(){
+    public function getClientes()
+    {
 
         $cli = new PuntocontrolManager;
 
         $clientes = $cli->getClientes();
-        
-        return $clientes;
 
+        return $clientes;
     }
 
     //LISTO LOS OBJETIVOS SEGUN EL CLIENTE
-    public function listarObjetivos($data){
+    public function listarObjetivos($data)
+    {
 
         $idCliente = $data['idcliente'];
         $listarObjetivos = new PuntocontrolManager();
 
         echo json_encode($listarObjetivos->listarObjetivos($idCliente));
-
     }
 
 
 
     //CARGAMOS LA TABLA DE CONTROLES SEGUN EL CLIENTE SELECCIONADO
-    public function tablaControlCliente($data){
+    public function tablaControlCliente($data)
+    {
 
         $idCliente = $data['id_cliente'];
         $idobjetivoCliente = $data['id_objetivo'];
 
         $tablaControlCliente = new PuntocontrolManager();
 
-        $result = $tablaControlCliente->getControlCliente($idCliente,$idobjetivoCliente);
+        $result = $tablaControlCliente->getControlCliente($idCliente, $idobjetivoCliente);
 
         echo json_encode($result);
-
     }
 
 
 
     //CARGO UN NUEVO CONTROL
-    public function cargaControl($data) {
-        
+    public function cargaControl($data)
+    {
+
         $date = date("Y-m-d");
 
         $idcliente = $data['id'];
@@ -92,67 +101,63 @@ class PuntocontrolController extends Controller
         $fecha = $date;
 
         $control = new PuntocontrolManager;
-            
-        $carga = $control->cargaControl($idcliente,$nombre,$id_objetivo,$objetivo,$fecha);
-        
-        if($carga){
+
+        $carga = $control->cargaControl($idcliente, $nombre, $id_objetivo, $objetivo, $fecha);
+
+        if ($carga) {
             echo "Control cargado correctamente";
-        }else{
+        } else {
             echo "Error al cargar el control";
         }
-              
     }
-    
+
 
     //ELIMINO UN CONTROL
-    public function eliminarControl($data){
+    public function eliminarControl($data)
+    {
 
-        $idcambiarEstado = array (
-            'id'=> $data['id'],
+        $idcambiarEstado = array(
+            'id' => $data['id'],
         );
 
         $control = new PuntocontrolManager;
 
-        $consultaControl = $control->issetControl($idcambiarEstado);
+        $eliminaControl = $control->eliminarControl($idcambiarEstado);
 
-        if ($consultaControl==0){
-            $eliminaControl = $control->eliminarControl($idcambiarEstado);
-
-            if($eliminaControl){
-                echo "Control eliminado correctamente";
-            }else{
-                echo "Error al eliminar el control";
-            }
-        }else{ 
-           
-            $controlAsignado = true;
-
-        }
+       echo json_encode($eliminaControl);
     }
 
 
     //ACTUALIZO UN CONTROL
-    public function actualizaControl($data){
+    public function actualizaControl($data)
+    {
 
-        $actualizoControl = array (
-            'id'=> $data['id'],
-            'nombre'=> $data['nombre'],
-            'id_objetivo'=> $data['id_objetivo'],
-            'objetivo'=>$data['objetivo']
-            
+        $actualizoControl = array(
+            'id' => $data['id'],
+            'nombre' => $data['nombre'],
+            'id_objetivo' => $data['id_objetivo'],
+            'objetivo' => $data['objetivo']
+
         );
 
         $control = new PuntocontrolManager;
 
         $eliminaControl = $control->actualizarControl($actualizoControl);
 
-        if($eliminaControl){
+        if ($eliminaControl) {
             return "Control actualizado correctamente";
-        }else{
+        } else {
             return "Error al actualizado el control";
         }
-
     }
 
+    public function controlset($data){
+        $id_control = $data['id'];
 
+        $controlSet = new PuntocontrolManager;
+
+        $issetControl = $controlSet -> controlset($id_control);
+
+        echo $issetControl;
+    }
 }

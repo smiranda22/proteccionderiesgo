@@ -42,7 +42,7 @@ function listarPuntosControlCliente(id = null, objetivo = null) {
             <td>'+ data[i].id + '</td>\
             <td>'+ data[i].nombre + '</td>\
             <td>'+ data[i].objetivo + '</td>\
-            <td><button class="btn btn-warning rounded-pill" onclick="modal('+ datos + ')">Editar</button> <button class="ml-4 btn btn-danger rounded-pill" onclick="eliminarControl(' + datos + ')">Eliminar</button></td>\
+            <td><button class="btn btn-warning rounded-pill" onclick="modal('+ datos + ')">Editar</button> <button class="ml-4 btn btn-danger rounded-pill" onclick="ControlSet(' + datos + ')">Eliminar</button></td>\
             </tr>');
          }
       }
@@ -141,7 +141,7 @@ function listarItemsRonda(id, nombredeRonda) {
             $("#tablaModalItemsRonda tbody").append(`<tr">
             <td style="display:none"><input value="${e.id}"></input></td>
             <td style="width:400px">
-            <select id="${selectObjetivosId}">
+            <select id="${selectObjetivosId}"> 
             <option value="${e.id_objetivo}" selected=selected>${e.objetivo}</option>
             </select>
             </td> 
@@ -170,7 +170,8 @@ function listarItemsRonda(id, nombredeRonda) {
             <button class="btn btn-danger rounded-pill deleteItemModal" onClick="eliminarItemTablaModal(${e.id})">X</button>
             </td>
             </tr>`);
-            
+
+            $('#'+selectObjetivosId+'').prop('disabled', true);
             
             objetivosModal(idCliente, selectObjetivosId, e.id_objetivo, puntoControlId, e.puntocontrol_id);
             selectPuntosControl(selectObjetivosId, idCliente, puntoControlId, e.puntocontrol_id);
@@ -250,36 +251,72 @@ function guardarRonda() {
    
    $('#clienteNuevaRonda').attr("disabled", false);
    $('#objetivoClienteRonda').attr("disabled", false);
+
+   // Validacion nombre de la Ronda
+   let validacionNombre = $("#nombreRonda").val().length === 0 ? false : true;
+
+   // Validacion de la tabla 
+   let validacionTabla = $('#tabla-items-ronda tr td').length === 0 ? false : true;
+
+   if (validacionNombre) {
+      if (validacionTabla) {
+         $.ajax({
+            type: 'post',
+            cache: false,
+            url: '../ronda/guardoronda',
+            data: {
+               "cliente": $('#clienteNuevaRonda').val(),
+               "nombre": $('#nombreRonda').val(),
+               "itemsronda": itemsronda,
+               "itemstiempo": itemstiempo,
+               "itemscontrol": itemscontrol,
+               "qrCheck": qr,
+               "nfcCheck": nfc,
+               "llegueCheck": llegue
+            },
+            success: function (data) {
+               if (data) {
+                  alert("Ronda cargada exitosamente");
+                  location.href = "rondas";
+                  
+               } else {
+                  alert("Error al generar la ronda");
+               }
+               
+            }
+         });
+      }else{
+         alert("La tabla no puede quedar sin valores");
+      }
+      
+   }else {
+      alert ("El nombre de la Ronda no puede estar vacio");
+   }
    
+}
+
+// Preguntamos si el control esta sujeto a una ronda
+function ControlSet (id) {
+   let id_control = id;
+
    $.ajax({
       type: 'post',
       cache: false,
-      url: '../ronda/guardoronda',
+      url: 'puntocontrol/controlset',
       data: {
-         "cliente": $('#clienteNuevaRonda').val(),
-         "nombre": $('#nombreRonda').val(),
-         "itemsronda": itemsronda,
-         "itemstiempo": itemstiempo,
-         "itemscontrol": itemscontrol,
-         "qrCheck": qr,
-         "nfcCheck": nfc,
-         "llegueCheck": llegue
+         id: id_control
       },
       success: function (data) {
-         if (data) {
-            alert("Ronda cargada exitosamente");
-            location.href = "rondas";
-            
-         } else {
-            alert("Error al generar la ronda");
-         }
-         
-      }
+       if (data > 0) {
+          alert ("El punto de control esta asociado a una ronda")
+       }else{
+          eliminarControl(id_control);
+       }
+      },
    });
 }
 
-
-//ELIMINA CONTROL
+// Eliminamos un control
 
 function eliminarControl(id) {
    
@@ -539,13 +576,25 @@ $("#tablaModalAgregarItemsRonda").on("click", ".cancelNewItemModal", function ()
    
 });
 
+$("#cancelModal").on("click", function () {
+   $("#tablaModalAgregarItemsRonda").parents("tr").remove();
+   document.getElementById("newItemTable").style.display = "none";
+   $('#newItemModalButton').attr("disabled", false);
+   
+});
+
 function agregarItemTablaModal() {
 
    $('#newItemModalButton').attr("disabled", true);
    
    document.getElementById("newItemTable").style.display = "inline-block";
-   
+
+   let idObjetivoRonda = $("#objetivostableModal0 option:selected").val();
+
+   let nombrebjetivoRonda = $("#objetivostableModal0 option:selected").text();
+
    let idCliente = $('#clienteRondas').val();
+
    
    $.ajax({
       type: "post",
@@ -556,72 +605,60 @@ function agregarItemTablaModal() {
       success: function (data) {
          let datos = JSON.parse(data);
          $.map(datos, function (e, i) {
-            $("#selectAgregarObjetivosId").append("<option value=" + e.codigo_objetivo + ">" + e.nombre_objetivo + "</option>")
-            
-         })
+            $("#selectAgregarObjetivosId").append("<option value=" + idObjetivoRonda + " >" + nombrebjetivoRonda + "</option>")
+         }) 
+         selectAgregarPuntosControlId(idCliente);
       }
    });
 
+   let nextOrden =  $('#tablaModalItemsRonda tbody tr:last td:nth-child(3)').find('input').attr('value');
+
+   nextOrden++;
    
    
    $("#tablaModalAgregarItemsRonda tbody").html(`
       <tr>
-      <td style="width:400px" load="showOptionsNewItems();">
-         <select id="selectAgregarObjetivosId" onChange="">
-         <option selected=selected disabled >Seleccione un objetivo</option>
+      <td style="width:400px">
+         <select id="selectAgregarObjetivosId">
          </select>
       </td> 
       <td style="width:400px" data-column-id="puntoControlNewItem" class="newItemsOptions">
          <select id="selectNewPuntosControlId">
-         <option selected=selected disabled >Seleccione un punto de control</option>
+         <option selected=selected >Seleccione un punto de control</option>
       </td> 
-      <td style="width:15px" class="newItemsOptions"><input value="" name = "orden" id="ordenNewItem"></td>
-      <td style="width:75px" class="newItemsOptions"><input value="" name = "tiempo" id="tiempoNewItem"></td>
-      <td class="newItemsOptions">  
+      <td style="width:15px" class=""><input name="orden" id="ordenNewItem" value="${nextOrden}"></td>
+      <td style="width:75px" class=""><input name="tiempo" id="tiempoNewItem"></td>
+      <td class="">  
          <div class="custom-control custom-checkbox">
-         <input type="checkbox" value="" class="custom-control-input" id="qrCheckNewItem">
+         <input type="checkbox" class="custom-control-input" id="qrCheckNewItem">
          <label class="custom-control-label" for="qrCheckNewItem"></label>
          </div>
       </td>
-      <td class="newItemsOptions">
+      <td class="">
          <div class="custom-control custom-checkbox">
-         <input type="checkbox" value="" class="custom-control-input" id="nfcCheckNewItem">
+         <input type="checkbox" class="custom-control-input" id="nfcCheckNewItem">
          <label class="custom-control-label" for="nfcCheckNewItem"></label>
          </div>
       </td>
-      <td class="newItemsOptions">
+      <td class="">
          <div class="custom-control custom-checkbox">
-         <input type="checkbox" value="" class="custom-control-input" id="llegueCheckNewItem">
+         <input type="checkbox" class="custom-control-input" id="llegueCheckNewItem">
          <label class="custom-control-label" for="llegueCheckNewItem"></label>
          </div>
       </td>
-      <td style="width:150px" class="newItemsOptions">
+      <td style="width:150px" class="">
          <button class="btn btn-danger rounded-pill cancelNewItemModal" onClick="">X</button><button class="btn btn-success rounded-pill ml-2" onClick="newItemsRonda(this)"><i style="margin-left:0" class="fa fa-check"></i></button>
       </td>
       </tr>
   `);
-   
-   showOptionsNewItems();
 
-   $("#selectAgregarObjetivosId").on("change", function () {
-      $("#selectNewPuntosControlId").empty();
-      showOptionsNewItems(true);
-      selectAgregarPuntosControlId(idCliente);
-   })
+  $('#selectAgregarObjetivosId').attr("disabled", true);
 }
 
-function showOptionsNewItems(value = null){
-   if(value){
-      $(".newItemsOptions").show();
-   } else {
-      $(".newItemsOptions").hide();
-   }
-   
-}
 
 function selectAgregarPuntosControlId(idCliente) {
    
-   let selectObjetivosId = $("#selectAgregarObjetivosId option:selected ").val();
+   var selectObjetivosId = $("#selectAgregarObjetivosId").val();
    
    $.ajax({
       type: "post",
@@ -641,9 +678,6 @@ function selectAgregarPuntosControlId(idCliente) {
 }
 
 function newItemsRonda() {
-
-
-   let nombreRonda = $("#modalModificacionRondaTitle").text();
 
    let idRondaNewItem =  $("#idRondaModal").val();
    
@@ -725,13 +759,12 @@ $(document).ready(function () {
             pass: pass
          },
          success: function (data) {
-            var datos = JSON.parse(data);
-            var cbte = datos['usuario'];
-            if (cbte == false) {
-               $(".error_login").html("Usurio incorrecto");
-            } else {
+            if (data <= 0) {
+               alert("Usuario Invalido");
+            }else {
                location.href = "../puntocontrol";
             }
+           
          }
       });
    });
@@ -1013,10 +1046,8 @@ $(document).ready(function () {
       let idClienteAdminRonda = $('#clienteNuevaRonda').val();
       let idObjetivoAdminRonda = $('#objetivosClienteAdminRonda').val();
 
-      let orden = "ASC";
-
       
-      listarRondasCliente(idClienteAdminRonda,idObjetivoAdminRonda,filtro,orden);
+      listarRondasCliente(idClienteAdminRonda,idObjetivoAdminRonda,filtro);
 
    });
 
@@ -1030,7 +1061,7 @@ $(document).ready(function () {
 
 
 
-      let ordenNombre = $('#spanNombre').attr('value');
+      var ordenNombre = $('#spanNombre').attr('value');
 
       if (ordenNombre == "ASC") {
          ordenNombre == $("#spanNombre").attr("value","DESC"); 
@@ -1039,6 +1070,8 @@ $(document).ready(function () {
             ordenNombre == $("#spanNombre").attr("value","ASC"); 
          }
       }
+
+      console.log(ordenNombre);
       
       let filtroNombre = $('#botonFiltroNombre').attr("value");
 
@@ -1090,11 +1123,8 @@ $(document).ready(function () {
             ordenEstado == $("#spanEstado").attr("value","ASC"); 
          }
       }
-
-      console.log(ordenEstado);
       
       let filtroEstado = $('#botonFiltroEstado').attr('value');
-
 
       $("#tabla-rondas-cliente tbody").empty();
 
