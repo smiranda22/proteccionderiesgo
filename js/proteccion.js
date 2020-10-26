@@ -46,7 +46,7 @@ function listarPuntosControlCliente(id = null, objetivo = null) {
             <td>'+ data[i].id + '</td>\
             <td>'+ data[i].nombre + '</td>\
             <td>'+ data[i].objetivo + '</td>\
-            <td><button class="btn btn-warning rounded-pill" onclick="modal('+ datos + ')">Editar</button> <button class="ml-4 btn btn-danger rounded-pill" onclick="ControlSet(' + datos + ')">Eliminar</button></td>\
+            <td><button class="btn btn-warning btn-sm rounded-pill" onclick="modal('+ datos + ')">Editar</button> <button class="ml-4 btn btn-danger btn-sm rounded-pill" onclick="ControlSet(' + datos + ')">Eliminar</button></td>\
             </tr>');
          }
       }
@@ -102,8 +102,8 @@ function listarRondasCliente(id = null, objetivo = null, filtro = null, orden) {
             <td><span class="badge badge-pill badge-${estilo_estado}">${estado}</span></td> 
             <td class="text-center"><button id="listarRondaModal" class="btn listarRondaModal" onClick="listarItemsRonda(${e.id},'${e.nombre}')"><i class="fa fa-eye" style="color:#2271B3"></i></button></td>
             <td class="text-center">
-            <button class="btn btn-warning rounded-pill" onClick="modalEditarRonda(${e.id},'${e.nombre}',${e.estado})">Editar</button>
-            <button class="btn btn-danger rounded-pill ml-4" onClick="eliminarRonda(${e.id})">Eliminar</button>
+            <button class="btn btn-warning btn-sm rounded-pill" onClick="modalEditarRonda(${e.id},'${e.nombre}',${e.estado})">Editar</button>
+            <button class="btn btn-danger btn-sm rounded-pill ml-4" onClick="eliminarRonda(${e.id})">Eliminar</button>
             </td>
             </tr>`);
          });
@@ -171,7 +171,7 @@ function listarItemsRonda(id, nombredeRonda) {
             </td>
             <td style="width:400px"><select id="${puntoControlId}"><option selected=selected value="${e.puntocontrol_id}">${e.nombre}</option></select></td> 
             <td class="text-center">
-            <button class="btn btn-danger rounded-pill deleteItemModal" onClick="eliminarItemTablaModal(${e.id})">X</button>
+            <button class="btn btn-danger rounded-pill btn-sm deleteItemModal" onClick="eliminarItemTablaModal(${e.id})">X</button>
             </td>
             </tr>`);
 
@@ -658,7 +658,8 @@ function agregarItemTablaModal() {
          </div>
       </td>
       <td style="width:150px" class="">
-         <button class="btn btn-danger rounded-pill cancelNewItemModal" onClick="">X</button><button class="btn btn-success rounded-pill ml-2" onClick="newItemsRonda(this)"><i style="margin-left:0" class="fa fa-check"></i></button>
+         <button class="btn btn-danger btn-sm rounded-pill cancelNewItemModal"><i style="margin-left:0" class="fa fa-times"></i></button> 
+         <button class="btn btn-success btn-sm rounded-pill ml-2" onClick="newItemsRonda(this)"><i style="margin-left:0" class="fa fa-check"></i></button>
       </td>
       </tr>
   `);
@@ -1013,7 +1014,7 @@ $(document).ready(function () {
          <td value='+ qrCheck + ' class="text-center" >' + qrCheckIcon + '</td> \
          <td value='+ nfcCheck + ' class="text-center" >' + nfcCheckIcon + '</td> \
          <td value='+ llegueCheck + ' class="text-center" >' + llegueCheckIcon + '</td> \
-         <td class="text-center del"><button class="btn btn-danger rounded-pill">Eliminar</button></td>\
+         <td class="text-center del"><button class="btn btn-danger btn-sm rounded-pill">Eliminar</button></td>\
          </tr>');
 
          let contador = document.getElementById("ordenItemRonda").value;
