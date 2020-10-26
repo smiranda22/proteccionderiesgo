@@ -1,20 +1,24 @@
-//MOSTRAR DATOS PUNTO DE CONTROL EN EL MODAL
+// Mostramos los datos del punto de control en el modal
 
 function modal(id, nombre, objetivo, id_objetivo) {
-   
-   
-   
+
+
+
    $('#idControlActulizar').val(id);
    $('#controlActualizar').val(nombre);
    $('#modificarObjetivo').val(id_objetivo);
    $('#optobjetivo').val(objetivo);
-   
-   
+
+
    $('#actualizarControlModal').modal('toggle');
 }
 
+// Listamos los puntos de control segun el cliente y el objetivo seleccionado [PUNTOS DE CONTROL]
+
 function listarPuntosControlCliente(id = null, objetivo = null) {
-   
+
+   $('#agregarControl').prop('disabled', false);
+
    if (id == null) {
       var idCliente = $('#cliente').val();
       var objetivocliente = $('#objetivo').val();
@@ -22,7 +26,7 @@ function listarPuntosControlCliente(id = null, objetivo = null) {
       var idCliente = id;
       var objetivocliente = objetivo;
    }
-   
+
    $.ajax({
       type: 'post',
       cache: false,
@@ -33,9 +37,9 @@ function listarPuntosControlCliente(id = null, objetivo = null) {
          id_objetivo: objetivocliente
       },
       success: function (data) {
-         
+
          $("#tabla-control tbody").empty();
-         
+
          for (var i = 0; i < data.length; i++) {
             var datos = data[i].id + ",'" + data[i].nombre + "','" + data[i].objetivo + "'," + data[i].id_objetivo;
             $("#tabla-control tbody").append('<tr> \
@@ -49,10 +53,10 @@ function listarPuntosControlCliente(id = null, objetivo = null) {
    });
 }
 
-//LISTAMOS LAS RONDAS SEGUN EL CLIENTE SELECCIONADO
+// Listamos las rondas segun el cliente seleccionado [RONDAS]
 
 function listarRondasCliente(id = null, objetivo = null, filtro = null, orden) {
-   
+
    let ordenTabla = orden;
 
    if (filtro == null) {
@@ -60,7 +64,7 @@ function listarRondasCliente(id = null, objetivo = null, filtro = null, orden) {
    } else {
       var filtroTabla = filtro;
    }
-   
+
    if (id == null) {
       var idCliente = $('#clienteRondas').val();
    } else {
@@ -72,7 +76,7 @@ function listarRondasCliente(id = null, objetivo = null, filtro = null, orden) {
    } else {
       var idObjetivo = objetivo;
    }
-   
+
    $.ajax({
       type: "post",
       url: "rondacliente",
@@ -83,12 +87,12 @@ function listarRondasCliente(id = null, objetivo = null, filtro = null, orden) {
          orden: ordenTabla
       },
       success: function (data) {
-         
-         
+
+
          $datos = JSON.parse(data);
-         
+
          $("#tabla-rondas-cliente tbody").empty();
-         
+
          $.map($datos, function (e, i) {
             let estilo_estado = (e.estado == 0) ? 'danger' : 'success';
             let estado = (e.estado == 0) ? 'Inactivo' : 'Activo';
@@ -108,21 +112,21 @@ function listarRondasCliente(id = null, objetivo = null, filtro = null, orden) {
 }
 
 
-//LLENAMOS LA TABLA DE MODAL DE LA RONDA CON LOS DATOS ITEMS DE RONDA
+// LLenamos la tabla del modal de la ronda con los datos de items de ronda [RONDA]
 
 function listarItemsRonda(id, nombredeRonda) {
-   
+
    let idRonda = id;
    let nombreRonda = nombredeRonda;
    let idCliente = $('#clienteRondas').val();
-   
-   
+
+
    $("#tablaModalItemsRonda tbody").empty();
    $(".modal-title-items").html(nombreRonda);
-   
+
    $("#idRondaModal").val(idRonda);
-   
-   
+
+
    $.ajax({
       type: "post",
       url: "itemsRonda",
@@ -130,14 +134,14 @@ function listarItemsRonda(id, nombredeRonda) {
          idRonda: idRonda
       },
       success: function (data) {
-         
+
          $datos = JSON.parse(data);
-         
+
          $.map($datos, function (e, i) {
-            
+
             let selectObjetivosId = 'objetivostableModal' + i;
             let puntoControlId = 'puntoControlModal' + i;
-            
+
             $("#tablaModalItemsRonda tbody").append(`<tr">
             <td style="display:none"><input value="${e.id}"></input></td>
             <td style="width:400px">
@@ -171,59 +175,59 @@ function listarItemsRonda(id, nombredeRonda) {
             </td>
             </tr>`);
 
-            $('#'+selectObjetivosId+'').prop('disabled', true);
-            
+            $('#' + selectObjetivosId + '').prop('disabled', true);
+
             objetivosModal(idCliente, selectObjetivosId, e.id_objetivo, puntoControlId, e.puntocontrol_id);
             selectPuntosControl(selectObjetivosId, idCliente, puntoControlId, e.puntocontrol_id);
-              
+
          });
-         
+
       }
    });
-   
+
    $('#listarItemRondaModal').modal('toggle');
 }
 
 
-//ELIMINAMOS UN ITEM DE LA TABLA ITEMS DE RONDA
+// Eliminamos un item de la tabla items de ronda [RONDA]
 
 $("#tabla-items-ronda").on("click", ".del", function () {
    $(this).parents("tr").remove();
-   
+
    let contador = document.getElementById("ordenItemRonda").value;
-   
+
    contador--;
-   
+
    $('#ordenItemRonda').val(contador);
-   
+
 });
 
 
 
-////FUNCION PARA GUARDAR RONDA/////
+// Guardamos una nueva ronda [NUEVA RONDA]
 
 function guardarRonda() {
-   
-   
+
+
    var ordenItemRonda = Array();
    var tiempoItemRonda = Array();
    var itemscontrol = Array();
    var QrCheck = Array();
    var NfcCheck = Array();
    var LlegueCheck = Array();
-   
+
    var itemsronda = [];
    var itemstiempo = [];
    var itemscontrol = [];
    var qr = [];
    var nfc = [];
    var llegue = [];
-   
-   
+
+
    $('#tabla-items-ronda tbody tr td:nth-child(1)').each(function () {
       ordenItemRonda.push($(this).text());
    });
-   
+
    $('#tabla-items-ronda tbody tr td:nth-child(2)').each(function () {
       tiempoItemRonda.push($(this).text());
    });
@@ -239,8 +243,8 @@ function guardarRonda() {
    $('#tabla-items-ronda tbody tr td:nth-child(7)').each(function () {
       LlegueCheck.push($(this).attr('value'));
    });
-   
-   
+
+
    qr = QrCheck;
    nfc = NfcCheck;
    llegue = LlegueCheck;
@@ -248,7 +252,7 @@ function guardarRonda() {
    itemstiempo = tiempoItemRonda;
    itemscontrol = itemscontrol;
 
-   
+
    $('#clienteNuevaRonda').attr("disabled", false);
    $('#objetivoClienteRonda').attr("disabled", false);
 
@@ -278,25 +282,26 @@ function guardarRonda() {
                if (data) {
                   alert("Ronda cargada exitosamente");
                   location.href = "rondas";
-                  
+
                } else {
                   alert("Error al generar la ronda");
                }
-               
+
             }
          });
-      }else{
+      } else {
          alert("La tabla no puede quedar sin valores");
       }
-      
-   }else {
-      alert ("El nombre de la Ronda no puede estar vacio");
+
+   } else {
+      alert("El nombre de la ronda no puede estar vacio");
    }
-   
+
 }
 
-// Preguntamos si el control esta sujeto a una ronda
-function ControlSet (id) {
+// Preguntamos si el control esta sujeto a una ronda antes de eliminarlo [PUNTO DE CONTROL]
+
+function ControlSet(id) {
    let id_control = id;
 
    $.ajax({
@@ -307,21 +312,21 @@ function ControlSet (id) {
          id: id_control
       },
       success: function (data) {
-       if (data > 0) {
-          alert ("El punto de control esta asociado a una ronda")
-       }else{
-          eliminarControl(id_control);
-       }
+         if (data > 0) {
+            alert("El punto de control esta asociado a una ronda")
+         } else {
+            eliminarControl(id_control);
+         }
       },
    });
 }
 
-// Eliminamos un control
+// Eliminamos un control [PUNTO DE CONTROL]
 
 function eliminarControl(id) {
-   
+
    let id_control = id;
-   
+
    $.ajax({
       type: 'post',
       cache: false,
@@ -332,7 +337,7 @@ function eliminarControl(id) {
       success: function (data) {
          alert("Control eliminado correctamente");
          listarPuntosControlCliente();
-         
+
       },
       error: function (data) {
          alert("Error al eliminar el control");
@@ -340,27 +345,27 @@ function eliminarControl(id) {
    });
 }
 
-//MODIFICAR RONDA
+// Cargamos el modal con los datos de la ronda [RONDA]
 
 function modalEditarRonda(id, nombre, estado) {
    let id_ronda = id;
    let nombre_ronda = nombre;
    let estado_ronda = estado;
-   
+
    $('#idRonda').val(id_ronda);
    $('#nombreRonda').val(nombre_ronda);
    $('#selectEstadosRonda option[value="' + estado_ronda + '"]').prop("selected", true);
-   
+
    $('#modalRonda').modal('toggle');
 }
 
-//EDITAR RONDA
+// Guardamos la ronda editada
 
 function editarRonda() {
    let idRonda = $('#idRonda').val();
    let nombreRonda = $('#nombreRonda').val();
    let estadoRonda = $('#selectEstadosRonda option:selected').val();
-   
+
    {
       if (nombreRonda.length > 0) {
          if (confirm('¿Desea modificar esta ronda?')) {
@@ -376,7 +381,7 @@ function editarRonda() {
                   alert("Se modifico la ronda correctamente");
                   $('#modalRonda').modal('toggle');
                   listarRondasCliente();
-                  
+
                }
             });
          }
@@ -384,15 +389,15 @@ function editarRonda() {
          alert("Nombre no puede estar vacío")
       }
    }
-   
+
 }
 
-//ELIMINAR RONDA 
+// Eliminamos una ronda 
 
 function eliminarRonda(id) {
-   
+
    let idRonda = id;
-   
+
    if (confirm('¿Desea eliminar esta ronda?')) {
       $.ajax({
          type: "post",
@@ -403,16 +408,17 @@ function eliminarRonda(id) {
          success: function (data) {
             alert("Ronda eliminada satisfactoriamente");
             listarRondasCliente();
-            
+
          }
       });
    }
 }
 
-//LISTAMOS LOS OBJETIVOS DEL MODAL SEGUN EL CLIENTE Y SEGUN ELLOS, LLAMO FUNCION PARA LISTAR LOS PUNTOS DE CONTROL
+// Listamos los objetivos del modal segun el cliente y segun el objetivo listo los puntos de control [RONDA]
+
 function objetivosModal(idClienteRonda, selectObjetivosId, idObjetivo, puntoControlId, idPuntoControl) {
-   
-   
+
+
    $.ajax({
       type: "post",
       url: "objetivosModal",
@@ -424,9 +430,9 @@ function objetivosModal(idClienteRonda, selectObjetivosId, idObjetivo, puntoCont
          $.map(datos, function (e, i) {
             if (idObjetivo != e.codigo_objetivo) {
                $("#" + selectObjetivosId + "").append("<option value=" + e.codigo_objetivo + ">" + e.nombre_objetivo + "</option>")
-               
+
             }
-            
+
          })
          $("#" + selectObjetivosId + "").on("change", function () {
             $("#" + puntoControlId + "").empty();
@@ -436,11 +442,12 @@ function objetivosModal(idClienteRonda, selectObjetivosId, idObjetivo, puntoCont
    });
 }
 
-//LISTAMOS LOS PUNTOS DE CONTROL
+// Listamos los puntos de control segun el objetivo y el cliente
+
 function selectPuntosControl(selectObjetivo, idClienteRonda, SelectpuntoControlId, idPuntoControl) {
    let objetivosIdModal = $("#" + selectObjetivo + " option:selected ").val();
-   
-   
+
+
    $.ajax({
       type: "post",
       url: "puntoscontrolCliente",
@@ -449,7 +456,7 @@ function selectPuntosControl(selectObjetivo, idClienteRonda, SelectpuntoControlI
          id_cliente: idClienteRonda
       },
       success: function (data) {
-         
+
          let datos = JSON.parse(data);
          $.map(datos, function (e, i) {
             // console.log(e.id == idPuntoControl);
@@ -462,10 +469,10 @@ function selectPuntosControl(selectObjetivo, idClienteRonda, SelectpuntoControlI
 }
 
 
-//CAPTURAMOS LOS DATOS EDITADOS DE LA TABLA DE ITEMS DE RONDA DEL MODAL 
+// Capturamos los datos editados de la tabla items de ronda modal [RONDA]
 
 function guardarItemsRonda() {
-   
+
    var idRondaItems = [];
    var itemsPuntoControl = [];
    var itemsOrdenronda = [];
@@ -474,23 +481,23 @@ function guardarItemsRonda() {
    var nfc = [];
    var llegue = [];
    var itemsObjetivo = [];
-   
-   
-   
+
+
+
    $('#tablaModalItemsRonda tbody tr td:nth-child(1)').each(function () {
       idRondaItems.push($(this).find("input").attr('value'));
    });
-   
+
    $('#tablaModalItemsRonda tbody tr td:nth-child(8)').each(function () {
       console.log($("option:selected", this).val());
    });
-   
+
    $('#tablaModalItemsRonda tbody tr td:nth-child(3)').each(function () {
       itemsOrdenronda.push($(this).find("input").val());
    });
    $('#tablaModalItemsRonda tbody tr td:nth-child(4)').each(function () {
       itemstiempo.push($(this).find("input").val());
-      
+
    });
    $('#tablaModalItemsRonda tbody tr td:nth-child(5)').each(function () {
       if ($(this).find("input").is(":checked")) {
@@ -517,7 +524,7 @@ function guardarItemsRonda() {
       llegue.push($(this).find("input").val());
    });
 
-  $.ajax({
+   $.ajax({
       type: 'post',
       cache: false,
       url: '../ronda/guardoItemRondaActualizada',
@@ -537,20 +544,20 @@ function guardarItemsRonda() {
                alert("Ronda actualizada exitosamente");
                $('#listarItemRondaModal').modal('toggle');
                listarRondasCliente();
-               
+
             } else {
                alert("Error al actualizar la ronda");
             }
          }
-         
-         
+
+
       }
    });
 }
 
-//ELIMINAMOS UN ITEM DE LA TABLA ITEMS DE RONDA
+// Eliminamos un item de la tabla items de ronda
 function eliminarItemTablaModal(idItemRonda) {
-   
+
    $.ajax({
       type: 'post',
       cache: false,
@@ -564,29 +571,33 @@ function eliminarItemTablaModal(idItemRonda) {
    });
 }
 
-//REMOVEMOS EL ITEM ELIMINADO DE LA TABLA ITEMS DE RONDA
+// Removemos el item eliminado de la tabla items de ronda [RONDA]
+
 $("#tablaModalItemsRonda").on("click", ".deleteItemModal", function () {
    $(this).parents("tr").remove();
-   
+
 });
 
 $("#tablaModalAgregarItemsRonda").on("click", ".cancelNewItemModal", function () {
    $(this).parents("tr").remove();
    document.getElementById("newItemTable").style.display = "none";
-   
+   $('#newItemModalButton').attr("disabled", false);
+
 });
 
 $("#cancelModal").on("click", function () {
    $("#tablaModalAgregarItemsRonda").parents("tr").remove();
    document.getElementById("newItemTable").style.display = "none";
    $('#newItemModalButton').attr("disabled", false);
-   
+
 });
+
+// Abrimos los input para cargar un nuevo item a la ronda desde el modal [RONDA]
 
 function agregarItemTablaModal() {
 
    $('#newItemModalButton').attr("disabled", true);
-   
+
    document.getElementById("newItemTable").style.display = "inline-block";
 
    let idObjetivoRonda = $("#objetivostableModal0 option:selected").val();
@@ -595,27 +606,27 @@ function agregarItemTablaModal() {
 
    let idCliente = $('#clienteRondas').val();
 
-   
+
    $.ajax({
       type: "post",
       url: "../ronda/objetivosRondaCliente",
       data: {
-         id_cliente : idCliente
+         id_cliente: idCliente
       },
       success: function (data) {
          let datos = JSON.parse(data);
          $.map(datos, function (e, i) {
             $("#selectAgregarObjetivosId").append("<option value=" + idObjetivoRonda + " >" + nombrebjetivoRonda + "</option>")
-         }) 
+         })
          selectAgregarPuntosControlId(idCliente);
       }
    });
 
-   let nextOrden =  $('#tablaModalItemsRonda tbody tr:last td:nth-child(3)').find('input').attr('value');
+   let nextOrden = $('#tablaModalItemsRonda tbody tr:last td:nth-child(3)').find('input').attr('value');
 
    nextOrden++;
-   
-   
+
+
    $("#tablaModalAgregarItemsRonda tbody").html(`
       <tr>
       <td style="width:400px">
@@ -652,14 +663,15 @@ function agregarItemTablaModal() {
       </tr>
   `);
 
-  $('#selectAgregarObjetivosId').attr("disabled", true);
+   $('#selectAgregarObjetivosId').attr("disabled", true);
 }
 
+//Cargamos los puntos de control a seleccionar en los campos de nuevo item [RONDA]
 
 function selectAgregarPuntosControlId(idCliente) {
-   
+
    var selectObjetivosId = $("#selectAgregarObjetivosId").val();
-   
+
    $.ajax({
       type: "post",
       url: "puntoscontrolCliente",
@@ -668,7 +680,7 @@ function selectAgregarPuntosControlId(idCliente) {
          id_cliente: idCliente
       },
       success: function (data) {
-         
+
          let datos = JSON.parse(data);
          $.map(datos, function (e, i) {
             $("#selectNewPuntosControlId").append("<option value=" + e.id + ">" + e.nombre + "</option>")
@@ -677,18 +689,20 @@ function selectAgregarPuntosControlId(idCliente) {
    });
 }
 
+//Guardamos en la ronda el nuevo item generado [RONDA]
+
 function newItemsRonda() {
 
-   let idRondaNewItem =  $("#idRondaModal").val();
-   
+   let idRondaNewItem = $("#idRondaModal").val();
+
    let llegueCheckNewItem = $("#llegueCheckNewItem").prop('checked') ? 1 : 0;
    let qrCheckNewItem = $("#qrCheckNewItem").prop('checked') ? 1 : 0;
    let nfcCheckNewItem = $("#nfcCheckNewItem").prop('checked') ? 1 : 0;
-   
+
    let tiempoNewItem = $("#tiempoNewItem").val();
    let selectNewPuntosControlId = $("#selectNewPuntosControlId option:selected").val();
    let ordenNewItem = $("#ordenNewItem").val();
-   
+
    // validacion de checkbox
    let validarCheckobox = llegueCheckNewItem || qrCheckNewItem || nfcCheckNewItem;
 
@@ -699,19 +713,19 @@ function newItemsRonda() {
    let validacionTiempo = $("#tiempoNewItem").val().length === 0 ? false : true;
 
    if (validarCheckobox) {
-      if(validacionOrden&&validacionTiempo){
-      $.ajax({
+      if (validacionOrden && validacionTiempo) {
+         $.ajax({
             type: 'post',
             cache: false,
             url: '../ronda/newItemRondaActualizada',
             data: {
-               idRondaNewItem : idRondaNewItem,
-               selectNewPuntosControlId : selectNewPuntosControlId,
-               ordenNewItem : ordenNewItem,
-               tiempoNewItem : tiempoNewItem,
-               qrCheckNewItem : qrCheckNewItem, 
-               nfcCheckNewItem : nfcCheckNewItem,
-               llegueCheckNewItem : llegueCheckNewItem
+               idRondaNewItem: idRondaNewItem,
+               selectNewPuntosControlId: selectNewPuntosControlId,
+               ordenNewItem: ordenNewItem,
+               tiempoNewItem: tiempoNewItem,
+               qrCheckNewItem: qrCheckNewItem,
+               nfcCheckNewItem: nfcCheckNewItem,
+               llegueCheckNewItem: llegueCheckNewItem
             },
             success: function (data) {
                if (confirm('¿Desea agregar este item a la ronda?')) {
@@ -720,19 +734,19 @@ function newItemsRonda() {
                      $("#tablaModalAgregarItemsRonda tbody").empty();
                      document.getElementById("newItemTable").style.display = "none";
                      $('#newItemModalButton').attr("disabled", false);
-                     $('#listarItemRondaModal').modal('toggle');               
+                     $('#listarItemRondaModal').modal('toggle');
                   } else {
                      alert("Error al generar el item");
                   }
-               } 
+               }
             }
          });
-      }else{
+      } else {
          alert("No pueden haber campos vacios");
       }
-   }else {
-      alert ("Debe seleccionar al menos un checkbox");
-   }     
+   } else {
+      alert("Debe seleccionar al menos un checkbox");
+   }
 }
 
 
@@ -741,15 +755,15 @@ function newItemsRonda() {
 
 
 $(document).ready(function () {
-   
+
    /**************************** COMIENZA SCRIPTS DE PUNTOS DE CONTROL ************************************/
-   
-   //LOGUEAMOS AL USUARIO
-   
+
+   // Logueamos al usuario
+
    $('.envialogin').on('click', function () {
       var usuario = $('#usuario').val();
       var pass = $('#password').val();
-      
+
       $.ajax({
          type: 'post',
          cache: false,
@@ -761,23 +775,23 @@ $(document).ready(function () {
          success: function (data) {
             if (data <= 0) {
                alert("Usuario Invalido");
-            }else {
+            } else {
                location.href = "../puntocontrol";
             }
-           
+
          }
       });
    });
-   
-   
-   //CARGA OBJETIVOS SEGUN CLIENTE SELECCIONADO     
-   
+
+
+   // Cargamos el objetivo segun el cliente seleccionado   
+
    $('.clienteControl').change(function () {
-      
+
       var idcliente = $('#cliente').val();
-      
+
       $("#tabla-control tbody").empty();
-      
+
       $.ajax({
          type: 'post',
          cache: false,
@@ -789,38 +803,38 @@ $(document).ready(function () {
             let datos = JSON.parse(data);
             $.map(datos, function (e, i) {
                $("#objetivo").append("<option value=" + e.codigo_objetivo + ">" + e.nombre_objetivo + "</option>"),
-               $("#modificarObjetivo").append("<option value=" + e.codigo_objetivo + ">" + e.nombre_objetivo + "</option>")
+                  $("#modificarObjetivo").append("<option value=" + e.codigo_objetivo + ">" + e.nombre_objetivo + "</option>")
             })
          }
       });
       $("#objetivo option").not(':first').remove();
    })
-   
-   //LLENAMOS LA TABLA CON LOS CONTROLES DEL CLIENTE SELECCIONADO   
-   
+
+
+   // LLenamos la tabla con los controles de cliente seleccionados
    $('.objetivoCliente').change(function () {
-      
+
       var idcliente = $('#cliente').val();
       var objetivocliente = $('#objetivo').val();
-      
-      
+
+
       listarPuntosControlCliente(idcliente, objetivocliente);
-      
-      
+
+
    });
-   
-   
-   //MOSTRAR NOMBRE CONTROL y SUS BOTONES
-   
+
+
+   // Mostrar/ocultar botones para generar un nuevo control
+
    $('.agregarControl').on('click', function (e) {
       e.preventDefault();
       document.getElementById("nombreControl").style.display = "inline-flex";
       document.getElementById("guardarControlbtn").style.display = "inline-flex";
       document.getElementById("cancelarCargaControlbtn").style.display = "inline-flex";
       document.getElementById("agregarControl").style.display = "none";
-      
+
    });
-   
+
    $('.cancelarCarga').on('click', function (e) {
       e.preventDefault();
       document.getElementById("nombreControl").style.display = "none";
@@ -828,89 +842,107 @@ $(document).ready(function () {
       document.getElementById("cancelarCargaControlbtn").style.display = "none";
       document.getElementById("nombre-punto-control").value = '';
       document.getElementById("agregarControl").style.display = "inline-flex";
-      
+
    });
-   
-   //ALTA NUEVO CONTROL  
-   
+
+   // Generamos el alta de un nuevo control 
+
    $('.guardarControl').on('click', function () {
       var idcliente = $('#cliente').val();
       var nombre = $('#nombre-punto-control').val();
       var codigo_objetivo = $('#objetivo option:selected').val();
       var nombre_objetivo = $('#objetivo option:selected').text();
-      
-      document.getElementById("nombreControl").style.display = "none";
-      document.getElementById("guardarControlbtn").style.display = "none";
-      document.getElementById("cancelarCargaControlbtn").style.display = "none";
-      document.getElementById("nombre-punto-control").value = '';
-      document.getElementById("agregarControl").style.display = "inline-flex";
-      
-      $.ajax({
-         type: 'post',
-         cache: false,
-         url: 'puntocontrol/cargacontrol',
-         data: {
-            id: idcliente,
-            nombre: nombre,
-            id_objetivo: codigo_objetivo,
-            objetivo: nombre_objetivo
-         },
-         success: function (data) {
-            alert("Punto de control guardado exitosamente");
-            listarPuntosControlCliente();
-         }
-      });
+
+      let validacionNombrePuntoControl = $("#nombre-punto-control").val().length === 0 ? false : true;
+
+      if (validacionNombrePuntoControl) {
+         $.ajax({
+            type: 'post',
+            cache: false,
+            url: 'puntocontrol/cargacontrol',
+            data: {
+               id: idcliente,
+               nombre: nombre,
+               id_objetivo: codigo_objetivo,
+               objetivo: nombre_objetivo
+            },
+            success: function (data) {
+               alert("Punto de control guardado exitosamente");
+               listarPuntosControlCliente();
+
+               document.getElementById("nombreControl").style.display = "none";
+               document.getElementById("guardarControlbtn").style.display = "none";
+               document.getElementById("cancelarCargaControlbtn").style.display = "none";
+               document.getElementById("nombre-punto-control").value = '';
+               document.getElementById("agregarControl").style.display = "inline-flex";
+
+            }
+         });
+      } else {
+         alert("El nombre del control no puede estar vacio.");
+      }
+
+
    });
-   
-   
-   
-   //CARGAR CONTROL EDITADO
-   
+
+
+
+   // Guardamos un control editado
+
    $('.modificarControl').on('click', function (e) {
       e.preventDefault();
-      
+
       var id = $('#idControlActulizar').val();
       var nombre = $('#controlActualizar').val();
       var id_objetivo = $('#modificarObjetivo').val();
       var objetivo = $('#modificarObjetivo option:selected').text();
-      
-      $.ajax({
-         type: 'post',
-         cache: false,
-         url: 'puntocontrol/actualizacontrol',
-         data: {
-            id: id,
-            nombre: nombre,
-            id_objetivo: id_objetivo,
-            objetivo: objetivo
-         },
-         success: function (data) {
-            alert("Control actualizado correctamente");
-            $('#actualizarControlModal').modal('toggle');
-            listarPuntosControlCliente();
-            
-            
-         },
-         error: function (data) {
-            alert("Error al actualizar el control");
-         }
-      });
-      
-      
+
+      let validacionNombrePuntoControlModal = $("#controlActualizar").val().length === 0 ? false : true;
+
+      if (validacionNombrePuntoControlModal) {
+         $.ajax({
+            type: 'post',
+            cache: false,
+            url: 'puntocontrol/actualizacontrol',
+            data: {
+               id: id,
+               nombre: nombre,
+               id_objetivo: id_objetivo,
+               objetivo: objetivo
+            },
+            success: function (data) {
+               alert("Control actualizado correctamente");
+               $('#actualizarControlModal').modal('toggle');
+               listarPuntosControlCliente();
+
+
+            },
+            error: function (data) {
+               alert("Error al actualizar el control");
+            }
+         });
+      } else {
+         alert("El nombre del control no puede estar vacio");
+      }
+
+
+
+
    });
-   
+
    /**************************** FINALIZA SCRIPTS DE PUNTOS DE CONTROL ************************************/
-   
-   
+
+
    /**************************** COMIENZA SCRIPTS DE NUEVA RONDA *****************************************/
-   
-   //CARGAMOS EL SELECT DE PUNTOS DE CONTROL SEGUN EL CLIENTE SELECCIONADO
+
+   // Cargamos el select de puntos de control segun el cliente seleccionado
+
    $('#objetivoClienteRonda').change(function () {
-      
+
       let idcliente = $('#clienteNuevaRonda').val();
       let objetivoCliente = $('#objetivoClienteRonda').val();
-      
-      
+
+
       $.ajax({
          type: 'post',
          cache: false,
@@ -928,11 +960,11 @@ $(document).ready(function () {
       });
       $("#puntoControlCliente option").not(':first').remove();
    });
-   
-   //LLENAMOS LA TABLA DE ITEMS DE RONDA SEGUN LA SELECCION Y EL ORDEN 
-   
+
+   // LLenamos la tabla de items de ronda segun el cliente y el orden 
+
    $('.agregarItem').on('click', function (e) {
-      
+
       let secuencia = $('#ordenItemRonda').val();
       let puntoControl = $('#puntoControlCliente option:selected').text();
       let idPuntoControl = $('#puntoControlCliente').val();
@@ -941,59 +973,74 @@ $(document).ready(function () {
       $('#clienteNuevaRonda').attr("disabled", true);
       $('#objetivoClienteRonda').attr("disabled", true);
 
-      
+
       if (document.getElementById('qrCheck').checked) {
          var qrCheck = $('#qrCheck').val();
       } else {
          var qrCheck = $('#qrCheck').value = "0";
       }
-      
+
       if (document.getElementById('nfcCheck').checked) {
          var nfcCheck = $('#nfcCheck').val();
       } else {
          var nfcCheck = $('#nfcCheck').value = "0";
       }
-      
+
       if (document.getElementById('llegueCheck').checked) {
          var llegueCheck = $('#llegueCheck').val();
       } else {
          var llegueCheck = $('#llegueCheck').value = "0";
       }
-      
-      
-      
-      document.getElementById("puntoControlCliente").value = '';
-      document.getElementById("tiempoItemRonda").value = '';
-      $('input[type="checkbox"]').prop('checked', false);
-      
+
+
+
       let qrCheckIcon = (qrCheck == 0) ? '' : '<i class="fa fa-check"></i>';
       let nfcCheckIcon = (nfcCheck == 0) ? '' : '<i class="fa fa-check"></i>';
       let llegueCheckIcon = (llegueCheck == 0) ? '' : '<i class="fa fa-check"></i>';
-      
-      $("#tabla-items-ronda").append('<tr> \
-      <td id="secuencia" class="text-center w-2">'+ secuencia + '</td> \
-      <td class="text-center w-2">'+ tiempoItemRonda + '</td> \
-      <td style="display: none">'+ idPuntoControl + '</td> \
-      <td value='+ idPuntoControl + ' class="text-center" >' + puntoControl + '</td> \
-      <td value='+ qrCheck + ' class="text-center" >' + qrCheckIcon + '</td> \
-      <td value='+ nfcCheck + ' class="text-center" >' + nfcCheckIcon + '</td> \
-      <td value='+ llegueCheck + ' class="text-center" >' + llegueCheckIcon + '</td> \
-      <td class="text-center del"><button class="btn btn-danger rounded-pill">Eliminar</button></td>\
-      </tr>');
-      
-      let contador = document.getElementById("ordenItemRonda").value;
-      
-      contador++;
-      
-      $('#ordenItemRonda').val(contador);
-      
+
+
+      let validacionOrdenRonda = $("#tiempoItemRonda").val().length === 0 ? false : true;
+      let validacionTiempoRonda = $("#tiempoItemRonda").val().length === 0 ? false : true;
+      let validacionCheckoboxs = llegueCheckIcon || qrCheckIcon || nfcCheckIcon;
+
+      if (validacionOrdenRonda && validacionTiempoRonda && validacionCheckoboxs) {
+
+         $("#tabla-items-ronda").append('<tr> \
+         <td id="secuencia" class="text-center w-2">'+ secuencia + '</td> \
+         <td class="text-center w-2">'+ tiempoItemRonda + '</td> \
+         <td style="display: none">'+ idPuntoControl + '</td> \
+         <td value='+ idPuntoControl + ' class="text-center" >' + puntoControl + '</td> \
+         <td value='+ qrCheck + ' class="text-center" >' + qrCheckIcon + '</td> \
+         <td value='+ nfcCheck + ' class="text-center" >' + nfcCheckIcon + '</td> \
+         <td value='+ llegueCheck + ' class="text-center" >' + llegueCheckIcon + '</td> \
+         <td class="text-center del"><button class="btn btn-danger rounded-pill">Eliminar</button></td>\
+         </tr>');
+
+         let contador = document.getElementById("ordenItemRonda").value;
+
+         contador++;
+
+         $('#ordenItemRonda').val(contador);
+
+
+         document.getElementById("puntoControlCliente").value = '';
+         document.getElementById("tiempoItemRonda").value = '';
+         $('input[type="checkbox"]').prop('checked', false);
+
+      } else {
+         alert("No pueden haber campos vacio al agregar un item de ronda");
+      }
+
+
+
    });
-   
-   
+
+   // Cargamos el objetivo segun el cliente seleccionado de la ronda
+
    $('.ClienteRondas').change(function () {
-      
+
       let idClienteRonda = $('#clienteRondas').val();
-      
+
       $("#tabla-rondas-cliente tbody").empty();
 
       $.ajax({
@@ -1006,20 +1053,21 @@ $(document).ready(function () {
          },
          success: function (data) {
             for (let i = 0; i < data.length; i++) {
-               $("#objetivosClienteAdminRonda").append("<option value=" + data[i].codigo_objetivo + ">" + data[i].nombre_objetivo + "</option>")  
+               $("#objetivosClienteAdminRonda").append("<option value=" + data[i].codigo_objetivo + ">" + data[i].nombre_objetivo + "</option>")
             }
          }
       });
       $("#objetivosClienteAdminRonda option").not(':first').remove();
-      
+
    });
-   
-   //CARGAMOS EL SELECT DE PUNTOS DE CONTROL SEGUN EL CLIENTE SELECCIONADO
+
+   //Cargamos el select de puntos de control segune el cliente seleccionado [RONDAS]
+
    $('.clienteNuevaRonda').change(function () {
-      
+
       let idcliente = $('#clienteNuevaRonda').val();
-      
-      
+
+
       $.ajax({
          type: 'post',
          cache: false,
@@ -1031,23 +1079,30 @@ $(document).ready(function () {
          success: function (data) {
             for (let i = 0; i < data.length; i++) {
                $("#objetivoClienteRonda").append("<option value=" + data[i].codigo_objetivo + ">" + data[i].nombre_objetivo + "</option>")
-               
+
             }
          }
       });
       $("#objetivoClienteRonda option").not(':first').remove();
    });
 
+   // Habilitamos el boton de agregar item cuando seleccionamos cliente y objetivo [NUEVA RONDA]
 
-    //CARGAMOS EL SELECT DE PUNTOS DE CONTROL SEGUN EL CLIENTE SELECCIONADO
-    $('.objetivosClienteAdminRonda').change(function () {
-      
+   $('#objetivoClienteRonda').change(function () {
+      $('#agregarItem').attr("disabled", false);
+   });
+
+
+   // Cargamos el select de puntos de control segun el objetivo seleccionado
+
+   $('.objetivosClienteAdminRonda').change(function () {
+
       let filtro = null;
       let idClienteAdminRonda = $('#clienteNuevaRonda').val();
       let idObjetivoAdminRonda = $('#objetivosClienteAdminRonda').val();
 
-      
-      listarRondasCliente(idClienteAdminRonda,idObjetivoAdminRonda,filtro);
+
+      listarRondasCliente(idClienteAdminRonda, idObjetivoAdminRonda, filtro);
 
    });
 
@@ -1064,20 +1119,20 @@ $(document).ready(function () {
       var ordenNombre = $('#spanNombre').attr('value');
 
       if (ordenNombre == "ASC") {
-         ordenNombre == $("#spanNombre").attr("value","DESC"); 
+         ordenNombre == $("#spanNombre").attr("value", "DESC");
       } else {
          if (ordenNombre == "DESC") {
-            ordenNombre == $("#spanNombre").attr("value","ASC"); 
+            ordenNombre == $("#spanNombre").attr("value", "ASC");
          }
       }
 
       console.log(ordenNombre);
-      
+
       let filtroNombre = $('#botonFiltroNombre').attr("value");
 
       $("#tabla-rondas-cliente tbody").empty();
 
-      listarRondasCliente(idClienteAdminRonda,idObjetivoAdminRonda,filtroNombre,ordenNombre);
+      listarRondasCliente(idClienteAdminRonda, idObjetivoAdminRonda, filtroNombre, ordenNombre);
 
    });
 
@@ -1092,10 +1147,10 @@ $(document).ready(function () {
       let ordenFecha = $('#spanFecha').attr('value');
 
       if (ordenFecha == "ASC") {
-         ordenFecha == $("#spanFecha").attr("value","DESC"); 
+         ordenFecha == $("#spanFecha").attr("value", "DESC");
       } else {
          if (ordenFecha == "DESC") {
-            ordenFecha == $("#spanFecha").attr("value","ASC"); 
+            ordenFecha == $("#spanFecha").attr("value", "ASC");
          }
       }
 
@@ -1103,11 +1158,11 @@ $(document).ready(function () {
 
       $("#tabla-rondas-cliente tbody").empty();
 
-      listarRondasCliente(idClienteAdminRonda,idObjetivoAdminRonda,filtroFecha,ordenFecha);
+      listarRondasCliente(idClienteAdminRonda, idObjetivoAdminRonda, filtroFecha, ordenFecha);
 
    });
 
-   // Filtramos las rondas segun la fecha
+   // Filtramos las rondas segun el estado
 
    $('.botonFiltroEstado').on('click', function () {
 
@@ -1117,18 +1172,18 @@ $(document).ready(function () {
       let ordenEstado = $('#spanEstado').attr('value');
 
       if (ordenEstado == "ASC") {
-         ordenEstado == $("#spanEstado").attr("value","DESC"); 
+         ordenEstado == $("#spanEstado").attr("value", "DESC");
       } else {
          if (ordenEstado == "DESC") {
-            ordenEstado == $("#spanEstado").attr("value","ASC"); 
+            ordenEstado == $("#spanEstado").attr("value", "ASC");
          }
       }
-      
+
       let filtroEstado = $('#botonFiltroEstado').attr('value');
 
       $("#tabla-rondas-cliente tbody").empty();
 
-      listarRondasCliente(idClienteAdminRonda,idObjetivoAdminRonda,filtroEstado,ordenEstado);
+      listarRondasCliente(idClienteAdminRonda, idObjetivoAdminRonda, filtroEstado, ordenEstado);
 
    });
 
