@@ -365,6 +365,8 @@ function editarRonda() {
    let idRonda = $('#idRonda').val();
    let nombreRonda = $('#nombreRonda').val();
    let estadoRonda = $('#selectEstadosRonda option:selected').val();
+   let idCliente = $('#clienteRondas').val();
+   let idObjetivo = $('#objetivosClienteAdminRonda').val();
 
    {
       if (nombreRonda.length > 0) {
@@ -380,7 +382,7 @@ function editarRonda() {
                success: function (data) {
                   alert("Se modifico la ronda correctamente");
                   $('#modalRonda').modal('toggle');
-                  listarRondasCliente();
+                  listarRondasCliente(idCliente,idObjetivo);
 
                }
             });
@@ -1102,7 +1104,8 @@ $(document).ready(function () {
       let idClienteAdminRonda = $('#clienteNuevaRonda').val();
       let idObjetivoAdminRonda = $('#objetivosClienteAdminRonda').val();
 
-
+      $("#tabla-rondas-cliente tbody").empty();
+      
       listarRondasCliente(idClienteAdminRonda, idObjetivoAdminRonda, filtro);
 
    });
